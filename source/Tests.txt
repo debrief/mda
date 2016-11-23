@@ -30,8 +30,6 @@ End Sub
 
 ' run through a test
 Public Sub testOptimisation()
-    ' clear the console
-    clearDebugConsole
 
     Dim dataset As Legs
     Set dataset = Tests.collateTheseLegs

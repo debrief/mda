@@ -21,11 +21,25 @@ Private pProcessed As Boolean
 ' the name for this leg
 Private pName As String
 
+' the overall score for this leg
+Private pOptimiseScore As Double
+
+
 Private Sub Class_Initialize()
     Set pTimes = New Collection
     Set pBearings = New Collection
     pProcessed = False
+    pOptimiseScore = 0
 End Sub
+
+Public Property Get OptimiseScore() As Double
+    OptimiseScore = pOptimiseScore
+End Property
+
+Public Property Let OptimiseScore(value As Double)
+    pOptimiseScore = value
+End Property
+
 
 Public Property Get times() As Collection
     Set times = pTimes
@@ -47,13 +61,13 @@ Public Property Get Processed() As Boolean
     Processed = pProcessed
 End Property
 
-Public Property Let Processed(Value As Boolean)
-    pProcessed = Value
+Public Property Let Processed(value As Boolean)
+    pProcessed = value
 End Property
 
 Public Property Get name() As String
     name = pName
 End Property
-Public Property Let name(Value As String)
-    pName = Value
+Public Property Let name(value As String)
+    pName = value
 End Property

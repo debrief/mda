@@ -6,12 +6,14 @@ Const MAX_DOUBLE As Double = 1.79769313486231E+308
 
 ' whether to output slicing scores
 Public Const dSLICE_SCORES = 1
+Public Const dOPTIMISE_SCORES = 2
 
-' we use these globals to store the data we're using for the
+' we use thia global to store the data we're using for the
 ' in-worksheet optimiser
-Private globalTimes As Collection
-Private globalBearings As Collection
+Private globalLeg As leg
 
+' way of passing diangostic level to the optimiser code
+Private globalDiag As Long
 
 ' work out an optimal slicing for this leg
 ' times: the bearing times
@@ -27,11 +29,10 @@ Public Function sliceThisLeg(thisLeg As leg, _
     Set results = New Legs
     
     ' ok, find the overall score
-    Dim overallScore As Double
-    overallScore = optimiseThis(thisLeg, optimiseThreshold)
+    thisLeg.OptimiseScore = scoreFor(thisLeg, optimiseThreshold)
     
     If (diag And Optimisation.dSLICE_SCORES) Then
-        Debug.Print "Overall leg score:" & overallScore
+        Debug.Print "Overall leg score:" & thisLeg.OptimiseScore
     End If
     
     ' and now work through the slices
@@ -51,41 +52,40 @@ Public Function sliceThisLeg(thisLeg As leg, _
         Dim theLegs As Legs
         Set theLegs = SliceIntoLegs(thisLeg, tNow, zigBuffer)
         
-        ' right, get the score for the two slices
-        Dim beforeScore As Double, afterScore As Double
+        Dim before As leg, after As leg
+        Set before = theLegs.Items(1)
+        Set after = theLegs.Items(2)
         
-        beforeScore = optimiseThis(theLegs.Items(1), optimiseThreshold)
-        afterScore = optimiseThis(theLegs.Items(2), optimiseThreshold)
+        ' right, get the score for the two slices
+        before.OptimiseScore = scoreFor(before, optimiseThreshold)
+        after.OptimiseScore = scoreFor(after, optimiseThreshold)
                    
         If (diag And Optimisation.dSLICE_SCORES) Then
-            Debug.Print "Before score:" & beforeScore
-            Debug.Print "After score:" & afterScore
+            Debug.Print tNow & " - Before score:" & before.OptimiseScore & ", After score:" & after.OptimiseScore
         End If
                    
         ' find the leg lengths (ready to normalise)
         Dim totalCuts As Integer
         Dim beforeLen As Integer
         Dim afterLen As Integer
-        beforeLen = theLegs.Items(1).times.Count
-        afterLen = theLegs.Items(2).times.Count
+        beforeLen = before.times.Count
+        afterLen = after.times.Count
         totalCuts = beforeLen + afterLen
 
         ' did we get any answers?
-        If (beforeScore > 0) And (afterScore > 0) Then
+        If (before.OptimiseScore > 0) And (after.OptimiseScore > 0) Then
             ' ok, normalise their scores
-            beforeScore = beforeScore * beforeLen / totalCuts
-            afterScore = afterScore * afterLen / totalCuts
+            before.OptimiseScore = before.OptimiseScore * beforeLen / totalCuts
+            after.OptimiseScore = after.OptimiseScore * afterLen / totalCuts
             
             ' and calculate the result
             Dim result As Double
-            result = beforeScore + afterScore
+            result = before.OptimiseScore + after.OptimiseScore
             
             ' is it better?
             If (result < bestSoFar) Then
-            
                 If (diag And Optimisation.dSLICE_SCORES) Then
-                    Debug.Print "new optimal score, turning at:" & tNow & " is:" & result
-                    Debug.Print "After score:" & afterScore
+                    Debug.Print "Improved score: " & result & " whole leg is:" & thisLeg.OptimiseScore
                 End If
 
                 bestSoFar = result
@@ -98,7 +98,7 @@ Public Function sliceThisLeg(thisLeg As leg, _
     Next ctr
     
     ' ok, compare the scores
-    If (bestSoFar - overallScore > sliceDelta) Then
+    If (bestSoFar - thisLeg.OptimiseScore > sliceDelta) Then
         ' good enough. keep the results
     Else
         ' no, not good enough. forget them
@@ -112,7 +112,7 @@ Public Function sliceThisLeg(thisLeg As leg, _
 End Function
 
 
-Private Function optimiseThis(thisLeg As leg, threshold As Double) As Double
+Private Function scoreFor(thisLeg As leg, threshold As Double) As Double
 
     Dim result As Double
     result = 0
@@ -126,8 +126,7 @@ Private Function optimiseThis(thisLeg As leg, threshold As Double) As Double
         With Worksheets("OptimiseBPQ")
     
         ' put the datasets into global space (so the forecast function can see them)
-        Set globalTimes = thisLeg.times
-        Set globalBearings = thisLeg.bearings
+        Set globalLeg = thisLeg
     
         ' ok, setup the optimiser
         SolverReset
@@ -135,7 +134,7 @@ Private Function optimiseThis(thisLeg As leg, threshold As Double) As Double
         ' set the threshold for acceptance
         
         ' set the allowable step size
-        SolverOptions precision:=0.001
+        SolverOptions precision:=0.00001
         SolverOK SetCell:=Range("B6"), _
            MaxMinVal:=2, _
            ByChange:=Range("B3:B5")
@@ -144,7 +143,13 @@ Private Function optimiseThis(thisLeg As leg, threshold As Double) As Double
         SolverSolve UserFinish:=True
         
         ' get the result out of the box
-        result = Range("B6")
+        Dim resStr
+        resStr = Range("B6")
+        If (IsNumeric(resStr)) Then
+        result = resStr
+        Else
+            Debug.Print "** Optimise result isn't string!"
+        End If
         
         End With
         
@@ -154,7 +159,7 @@ Private Function optimiseThis(thisLeg As leg, threshold As Double) As Double
     End If
     
     ' store the result
-    optimiseThis = result
+    scoreFor = result
     
 End Function
 
@@ -169,7 +174,7 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
     If (True) Then
     
         ' do we have global data?
-        If (globalTimes Is Nothing) Then
+        If (globalLeg Is Nothing) Then
         
             Debug.Print "creating globs"
             ' create some data
@@ -177,28 +182,27 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
             Set data = Tests.collateTheseLegs
             Dim track As leg
             Set track = data.Item(1)
-            Set globalTimes = track.times
-            Set globalBearings = track.bearings
+            Set globalLeg = track
         End If
         
-        Set times = globalTimes
-        Set bearings = globalBearings
+        Set times = globalLeg.times
+        Set bearings = globalLeg.bearings
         
         Dim startTime
-        startTime = globalTimes.Item(1)
+        startTime = times.Item(1)
     
         ' ok, loop through the times
         Dim counter As Integer
         
-        For counter = 1 To globalTimes.Count
+        For counter = 1 To times.Count
             Dim thisTime
-            thisTime = globalTimes.Item(counter)
+            thisTime = times.Item(counter)
             
             Dim elapsed As Double
             elapsed = thisTime - startTime
             
             Dim thisBearing
-            thisBearing = globalBearings.Item(counter)
+            thisBearing = bearings.Item(counter)
             
             If elapsed > 0 Then
                 ' ok, calculate it
@@ -210,9 +214,7 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
                 score = score * score
                 
                 runningTotal = runningTotal + score
-                
             End If
-            
         Next counter
         
         If (runningTotal > 0) Then
@@ -221,24 +223,87 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
         
     End If
     
+    If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
+        Debug.Print "B:" & B & ", P:" & P & ", Q:" & Q & ", score:" & runningTotal
+    End If
+
+    
     calculateScore = runningTotal
     
 End Function
 
+Private Function toRad(value As Double) As Double
+    Const pi = 3.14159
+    toRad = (value / 180) * pi
+End Function
+
+Private Function toDeg(value As Double) As Double
+    Const pi = 3.14159
+    toDeg = (value * 180) / pi
+End Function
+
 Private Function forecastValue(elapsedTime, B As Double, P As Double, Q As Double)
     Dim dx, dy
-    dx = Cos(B) + Q * elapsedTime
-    dy = Sin(B) + P * elapsedTime
+    dx = Cos(toRad(B)) + Q * elapsedTime
+    dy = Sin(toRad(B)) + P * elapsedTime
     forecastValue = Excel.WorksheetFunction.Atan2(dy, dx)
 End Function
 
-Sub clearDebugConsole()
-    Dim i As Integer
-    For i = 0 To 4
-         Debug.Print ""
-    Next i
+Public Sub testOptimise()
+    Debug.Print "Test optimise"
+    
+    ' ok, create a straight line leg
+    Dim testLeg As leg
+    Set testLeg = Factory.createLeg("Straight")
+    
+    With testLeg.times
+        .add 2
+        .add 4
+        .add 6
+        .add 8
+        .add 10
+        .add 12
+        .add 14
+    End With
+    
+    With testLeg.bearings
+        .add 20
+        .add 40
+        .add 60
+        .add 80
+        .add 60
+        .add 40
+        .add 20
+    End With
+    
+    ' ok, test the calculate algorithm
+    Set globalLeg = testLeg
+    
+    ' we want to see the optimise steps
+    globalDiag = dOPTIMISE_SCORES
+    
+    Dim score As Double
+    score = calculateScore(2, 2, 2)
+    score = calculateScore(4, 4, 4)
+    score = calculateScore(123, 456, 789)
+    
+    Debug.Print "this score is:" & score
+                
+    Dim threshold As Double
+    threshold = 0.0001
+    score = scoreFor(testLeg, threshold)
+          
+    ' clear the optimise flags
+    globalDiag = 0
+    
 
+    Debug.Print "score for:" & threshold & " is " & score
+    
+    Dim slices As Legs
+ '   Set slices = sliceThisLeg(testLeg, 2, 0.001, 0.001, Optimisation.dSLICE_SCORES)
+    
 End Sub
+
 
 
 
