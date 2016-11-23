@@ -1,13 +1,7 @@
 Attribute VB_Name = "LegUtils"
 Option Explicit
 
-Public Const gBEFORE_TIMES As String = "BeforeTimes"
-Public Const gBEFORE_BEARINGS As String = "BeforeBearings"
-Public Const gAFTER_TIMES As String = "AfterTimes"
-Public Const gAFTER_BEARINGS As String = "AfterBearings"
-
-
-Function SliceLegs(thisLeg As leg, tNow As Double, zigBuffer As Double) As Legs
+Function SliceIntoLegs(thisLeg As leg, tNow As Double, zigBuffer As Double) As Legs
         
     Dim beforeLeg As leg
     Set beforeLeg = Factory.createLeg(thisLeg.name + ".1")
@@ -55,7 +49,7 @@ Function SliceLegs(thisLeg As leg, tNow As Double, zigBuffer As Double) As Legs
     res.add afterLeg
     
     ' and pass out the results
-    Set SliceLegs = res
+    Set SliceIntoLegs = res
     
 End Function
 
@@ -108,7 +102,7 @@ Public Sub testSlicing()
     tNow = 100
     zigBuffer = 200
     
-    Set slices = SliceLegs(track1, tNow, zigBuffer)
+    Set slices = SliceIntoLegs(track1, tNow, zigBuffer)
     
     ' get results
     Set before = slices.Items(1)
@@ -133,7 +127,7 @@ Public Sub testSlicing()
     tNow = 510
     zigBuffer = 200
     
-    Set slices = SliceLegs(track1, tNow, zigBuffer)
+    Set slices = SliceIntoLegs(track1, tNow, zigBuffer)
     
     ' get results
     Set before = slices.Items(1)
@@ -150,7 +144,7 @@ Public Sub testSlicing()
     tNow = 500
     zigBuffer = 100
     
-    Set slices = SliceLegs(track1, tNow, zigBuffer)
+    Set slices = SliceIntoLegs(track1, tNow, zigBuffer)
     
     ' get results
     Set before = slices.Items(1)
@@ -168,7 +162,7 @@ Public Sub testSlicing()
     tNow = 900
     zigBuffer = 200
     
-    Set slices = SliceLegs(track1, tNow, zigBuffer)
+    Set slices = SliceIntoLegs(track1, tNow, zigBuffer)
     
     ' get results
     Set before = slices.Items(1)

@@ -12,7 +12,7 @@ Option Explicit
 ' == It's made into a class so that it have custom processing,
 ' == such as a replace operation that re-orders the children
 
-Dim pLegs As Collection
+Private pLegs As Collection
 
 Private Sub Class_Initialize()
     Set pLegs = New Collection

@@ -1,10 +1,6 @@
 Attribute VB_Name = "Tests"
 Option Explicit
 
-
-Public Const gDATA_1 As String = "Data 1"
-Public Const gDATA_2 As String = "Data 2"
-
 ' run through all of our tests
 Public Sub AllTests()
     Debug.Print "== running all tests =="

@@ -48,15 +48,14 @@ Public Function sliceThisLeg(thisLeg As leg, _
         tNow = thisLeg.times.Item(ctr)
     
         ' ok, slice it at this point
-        Dim Legs As Collection
-        Set Legs = SliceLegs(thisLeg, tNow, zigBuffer)
+        Dim theLegs As Legs
+        Set theLegs = SliceIntoLegs(thisLeg, tNow, zigBuffer)
         
         ' right, get the score for the two slices
         Dim beforeScore As Double, afterScore As Double
         
-        beforeScore = optimiseThis(Legs.Item(1), optimiseThreshold)
-           
-        afterScore = optimiseThis(Legs.Item(2), optimiseThreshold)
+        beforeScore = optimiseThis(theLegs.Items(1), optimiseThreshold)
+        afterScore = optimiseThis(theLegs.Items(2), optimiseThreshold)
                    
         If (diag And Optimisation.dSLICE_SCORES) Then
             Debug.Print "Before score:" & beforeScore
@@ -67,8 +66,8 @@ Public Function sliceThisLeg(thisLeg As leg, _
         Dim totalCuts As Integer
         Dim beforeLen As Integer
         Dim afterLen As Integer
-        beforeLen = Legs.Item(LegUtils.gBEFORE_TIMES).Count
-        afterLen = Legs.Item(LegUtils.gAFTER_TIMES).Count
+        beforeLen = theLegs.Items(1).times.Count
+        afterLen = theLegs.Items(2).times.Count
         totalCuts = beforeLen + afterLen
 
         ' did we get any answers?
@@ -92,7 +91,7 @@ Public Function sliceThisLeg(thisLeg As leg, _
                 bestSoFar = result
                 
                 ' and remember the legs
-                Set results = Legs
+                Set results = theLegs
             End If
         End If
         
@@ -103,7 +102,7 @@ Public Function sliceThisLeg(thisLeg As leg, _
         ' good enough. keep the results
     Else
         ' no, not good enough. forget them
-        Set results = New Collection
+        Set results = New Legs
         
         Debug.Print ("Slices not better:" & (bestSoFar - sliceDelta))
     End If
@@ -177,7 +176,7 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
             Dim data As Collection
             Set data = Tests.collateTheseLegs
             Dim track As leg
-            Set track = data.Item(Tests.gDATA_2)
+            Set track = data.Item(1)
             Set globalTimes = track.times
             Set globalBearings = track.bearings
         End If
