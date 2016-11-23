@@ -1,8 +1,5 @@
 Attribute VB_Name = "HighLevel"
 
-Public Const gTIMES As String = "Times"
-Public Const gBEARINGS As String = "Bearings"
-
 Sub DoCalc_Click()
     ' populate list of ownship legs
     

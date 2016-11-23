@@ -34,15 +34,15 @@ Public Sub testMe()
     clearDebugConsole
 
     Dim dataset As Collection
-    Set dataset = collateTestData
+    Set dataset = Tests.collateTheseLegs
     
-    Dim thisData As Object
+    Dim thisData As Leg
     Set thisData = dataset.Item(Tests.gDATA_2)
     
     Dim arrTimes As Collection
     Dim arrBearings As Collection
-    Set arrTimes = thisData.Item(HighLevel.gTIMES)
-    Set arrBearings = thisData.Item(HighLevel.gBEARINGS)
+    Set arrTimes = thisData.Times
+    Set arrBearings = thisData.Bearings
     
     Debug.Print "found " & arrBearings.Count & " bearings."
     
@@ -78,7 +78,7 @@ Public Sub testMe()
 End Sub
 
 ' produce a single composite time/bearing dataset
-Private Function collateThisDataset()
+Private Function collateThisLeg() As Leg
     Dim arrTimes As Collection
     Set arrTimes = New Collection
     
@@ -108,24 +108,23 @@ Private Function collateThisDataset()
     arrBearings.Add 80 + Rnd * 10
     arrBearings.Add 90 + Rnd * 10
     arrBearings.Add 100 + Rnd * 10
-
-    Dim dict As Collection
-    Set dict = New Collection
     
-    dict.Add arrTimes, gTIMES
-    dict.Add arrBearings, gBEARINGS
+    Dim res As Leg
+    res = New Leg
+    res.Times = arrTimes
+    res.Bearings = arrBearings
     
-    Set collateThisDataset = dict
+    Set collateThisLeg = res
 
 End Function
 
 ' produce a collection of datasets
-Public Function collateTestData()
+Public Function collateTheseLegs()
     Dim dict As Collection
     Set dict = New Collection
     
-    dict.Add collateThisDataset, gDATA_1
-    dict.Add collateThisDataset, gDATA_2
+    dict.Add collateThisLeg, gDATA_1
+    dict.Add collateThisLeg, gDATA_2
         
-    Set collateTestData = dict
+    Set collateTheseLegs = dict
 End Function

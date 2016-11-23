@@ -19,7 +19,7 @@ Private globalBearings As Collection
 ' zigBuffer: the time period we allow for a turn
 ' optimiseThreshold: when optimisation is stable
 ' sliceDelta: how much better the slices have to be
-Public Function sliceThisLeg(times As Collection, bearings As Collection, _
+Public Function sliceThisLeg(Times As Collection, Bearings As Collection, _
     zigBuffer As Double, optimiseThreshold As Double, sliceDelta As Double, _
     diag As Integer) As Collection
     
@@ -28,7 +28,7 @@ Public Function sliceThisLeg(times As Collection, bearings As Collection, _
     
     ' ok, find the overall score
     Dim overallScore As Double
-    overallScore = optimiseThis(times, bearings, optimiseThreshold)
+    overallScore = optimiseThis(Times, Bearings, optimiseThreshold)
     
     If (diag And Optimisation.dSLICE_SCORES) Then
         Debug.Print "Overall leg score:" & overallScore
@@ -36,7 +36,7 @@ Public Function sliceThisLeg(times As Collection, bearings As Collection, _
     
     ' and now work through the slices
     Dim tLen As Integer
-    tLen = times.Count
+    tLen = Times.Count
     Dim ctr As Integer
     
     Dim bestSoFar As Double
@@ -45,11 +45,11 @@ Public Function sliceThisLeg(times As Collection, bearings As Collection, _
     For ctr = 1 To tLen
         ' get the time at this point
         Dim tNow As Double
-        tNow = times.Item(ctr)
+        tNow = Times.Item(ctr)
     
         ' ok, slice it at this point
         Dim legs As Collection
-        Set legs = SliceLegs(times, bearings, tNow, zigBuffer)
+        Set legs = SliceLegs(Times, Bearings, tNow, zigBuffer)
         
         ' right, get the score for the two slices
         Dim beforeScore As Double, afterScore As Double
@@ -115,13 +115,13 @@ Public Function sliceThisLeg(times As Collection, bearings As Collection, _
 End Function
 
 
-Private Function optimiseThis(times As Collection, bearings As Collection, threshold As Double) As Double
+Private Function optimiseThis(Times As Collection, Bearings As Collection, threshold As Double) As Double
 
     Dim result As Double
     result = 0
     
     ' check we have a minimum number of values
-    If (times.Count > 1) Then
+    If (Times.Count > 1) Then
     
         ' switch off screen updates
         Application.ScreenUpdating = False
@@ -129,8 +129,8 @@ Private Function optimiseThis(times As Collection, bearings As Collection, thres
         With Worksheets("OptimiseBPQ")
     
         ' put the datasets into global space (so the forecast function can see them)
-        Set globalTimes = times
-        Set globalBearings = bearings
+        Set globalTimes = Times
+        Set globalBearings = Bearings
     
         ' ok, setup the optimiser
         SolverReset
@@ -166,8 +166,8 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
     Dim runningTotal
     runningTotal = 0
         
-    Dim times As Collection
-    Dim bearings As Collection
+    Dim Times As Collection
+    Dim Bearings As Collection
     
     If (True) Then
     
@@ -177,15 +177,15 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
             Debug.Print "creating globs"
             ' create some data
             Dim data As Collection
-            Set data = Tests.collateTestData
-            Dim track As Collection
+            Set data = Tests.collateTheseLegs
+            Dim track As Leg
             Set track = data.Item(Tests.gDATA_2)
-            Set globalTimes = track.Item(HighLevel.gTIMES)
-            Set globalBearings = track.Item(HighLevel.gBEARINGS)
+            Set globalTimes = track.Times
+            Set globalBearings = track.Bearings
         End If
         
-        Set times = globalTimes
-        Set bearings = globalBearings
+        Set Times = globalTimes
+        Set Bearings = globalBearings
         
         Dim startTime
         startTime = globalTimes.Item(1)

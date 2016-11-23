@@ -7,12 +7,12 @@ Public Const gAFTER_TIMES As String = "AfterTimes"
 Public Const gAFTER_BEARINGS As String = "AfterBearings"
 
 
-Function SliceLegs(times As Collection, bearings As Collection, tNow As Double, zigBuffer As Double)
+Function SliceLegs(Times As Collection, Bearings As Collection, tNow As Double, zigBuffer As Double)
     ' work out half-buffer
     Dim halfWid As Double
     halfWid = zigBuffer / 2
     Dim dLen As Integer
-    dLen = times.Count
+    dLen = Times.Count
     
     Dim beforeTimes As Collection
     Set beforeTimes = New Collection
@@ -24,13 +24,13 @@ Function SliceLegs(times As Collection, bearings As Collection, tNow As Double, 
     Set afterBearings = New Collection
     
     Dim startTime As Double
-    startTime = times.Item(1)
+    startTime = Times.Item(1)
     
     Dim ctr As Integer
     For ctr = 1 To dLen
     
         Dim thisTime As Double
-        thisTime = times.Item(ctr)
+        thisTime = Times.Item(ctr)
         Dim elapsed As Double
         elapsed = thisTime - startTime
     
@@ -38,11 +38,11 @@ Function SliceLegs(times As Collection, bearings As Collection, tNow As Double, 
         If (thisTime <= tNow - halfWid) Then
             ' great, this one is ok
             beforeTimes.Add thisTime
-            beforeBearings.Add bearings.Item(ctr)
+            beforeBearings.Add Bearings.Item(ctr)
         ElseIf (thisTime >= tNow + halfWid) Then
             ' great, this one is ok
             afterTimes.Add thisTime
-            afterBearings.Add bearings.Item(ctr)
+            afterBearings.Add Bearings.Item(ctr)
         End If
     Next ctr
     
@@ -63,37 +63,37 @@ Public Sub testSlicing()
     Debug.Print "testSlicing"
 
     Dim data As Collection
-    Set data = collateTestData
+    Set data = collateTheseLegs
     
     Dim track1 As Collection
     Set track1 = data.Item(1)
     
-    Dim times As Collection
-    Dim bearings As Collection
-    Set times = New Collection
-    Set bearings = New Collection
+    Dim Times As Collection
+    Dim Bearings As Collection
+    Set Times = New Collection
+    Set Bearings = New Collection
     
-    times.Add 100
-    times.Add 200
-    times.Add 300
-    times.Add 400
-    times.Add 500
-    times.Add 600
-    times.Add 700
-    times.Add 800
-    times.Add 900
-    times.Add 1000
+    Times.Add 100
+    Times.Add 200
+    Times.Add 300
+    Times.Add 400
+    Times.Add 500
+    Times.Add 600
+    Times.Add 700
+    Times.Add 800
+    Times.Add 900
+    Times.Add 1000
     
-    bearings.Add 30
-    bearings.Add 40
-    bearings.Add 50
-    bearings.Add 60
-    bearings.Add 70
-    bearings.Add 80
-    bearings.Add 90
-    bearings.Add 100
-    bearings.Add 110
-    bearings.Add 210
+    Bearings.Add 30
+    Bearings.Add 40
+    Bearings.Add 50
+    Bearings.Add 60
+    Bearings.Add 70
+    Bearings.Add 80
+    Bearings.Add 90
+    Bearings.Add 100
+    Bearings.Add 110
+    Bearings.Add 210
     
     
     Dim slices As Collection
@@ -109,7 +109,7 @@ Public Sub testSlicing()
     tNow = 100
     zigBuffer = 200
     
-    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    Set slices = SliceLegs(Times, Bearings, tNow, zigBuffer)
     
     ' get results
     Set beforeTimes = slices.Item(gBEFORE_TIMES)
@@ -136,7 +136,7 @@ Public Sub testSlicing()
     tNow = 510
     zigBuffer = 200
     
-    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    Set slices = SliceLegs(Times, Bearings, tNow, zigBuffer)
     
     ' get results
     Set beforeTimes = slices.Item(gBEFORE_TIMES)
@@ -155,7 +155,7 @@ Public Sub testSlicing()
     tNow = 500
     zigBuffer = 100
     
-    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    Set slices = SliceLegs(Times, Bearings, tNow, zigBuffer)
     
     ' get results
     Set beforeTimes = slices.Item(gBEFORE_TIMES)
@@ -175,7 +175,7 @@ Public Sub testSlicing()
     tNow = 900
     zigBuffer = 200
     
-    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    Set slices = SliceLegs(Times, Bearings, tNow, zigBuffer)
     
     ' get results
     Set beforeTimes = slices.Item(gBEFORE_TIMES)
@@ -191,6 +191,46 @@ Public Sub testSlicing()
     End If
         
     Debug.Print "==Done=="
+    
+End Sub
+
+Public Sub testReorder()
+    Dim legs As Collection
+    Set legs = New Collection
+    
+    ' create some sample data
+    legs.Add "one"
+    legs.Add "two"
+    legs.Add "three"
+    legs.Add "four"
+    
+    ' and loop through it
+    Dim thisLeg
+    Dim ctr
+    ctr = 1
+    For Each thisLeg In legs
+    
+        If thisLeg = "two" Then
+            legs.Remove ctr
+            legs.Add "two b", , ctr
+            legs.Add "two a", , ctr
+        End If
+    
+        Debug.Print thisLeg
+        
+        ctr = ctr + 1
+    Next thisLeg
+    
+    Debug.Print "==="
+    
+    For Each thisLeg In legs
+  
+        Debug.Print thisLeg
+        
+        ctr = ctr + 1
+    Next thisLeg
+    
+    
     
 End Sub
 
