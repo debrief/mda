@@ -5,9 +5,12 @@ Option Explicit
 Public Const gDATA_1 As String = "Data 1"
 Public Const gDATA_2 As String = "Data 2"
 
+' run through all of our tests
 Public Sub AllTests()
-    Debug.Print "running all tests"
+    Debug.Print "== running all tests =="
     LegUtils.testSlicing
+    LegUtils.testReplaceLegs
+    Debug.Print "==  tests complete   =="
 End Sub
 
 'This code Exports all VBA modules
@@ -19,7 +22,7 @@ Sub SaveCodeModules()
         For i% = 1 To .VBComponents.Count
             If .VBComponents(i%).CodeModule.CountOfLines > 0 Then
                 Dim outPath
-                sName$ = .VBComponents(i%).CodeModule.Name
+                sName$ = .VBComponents(i%).CodeModule.name
                 outPath = Application.ActiveWorkbook.Path & "\source\" & sName$ & ".txt"
                 .VBComponents(i%).Export outPath
             End If
@@ -36,7 +39,7 @@ Public Sub testMe()
     Dim dataset As Collection
     Set dataset = Tests.collateTheseLegs
     
-    Dim thisData As Leg
+    Dim thisData As leg
     Set thisData = dataset.Item(Tests.gDATA_2)
     
     Dim arrTimes As Collection
@@ -78,53 +81,49 @@ Public Sub testMe()
 End Sub
 
 ' produce a single composite time/bearing dataset
-Private Function collateThisLeg() As Leg
-    Dim arrTimes As Collection
-    Set arrTimes = New Collection
+Private Function collateThisLeg(name As String) As leg
+
+    Dim res As leg
+    Set res = New leg
+    res.name = name
     
-    arrTimes.Add 0
-    arrTimes.Add 10
-    arrTimes.Add 20
-    arrTimes.Add 30
-    arrTimes.Add 40
-    arrTimes.Add 50
-    arrTimes.Add 60
-    arrTimes.Add 70
-    arrTimes.Add 80
-    arrTimes.Add 90
-    arrTimes.Add 100
+    res.Times.add 0
+    res.Times.add 10
+    res.Times.add 20
+    res.Times.add 30
+    res.Times.add 40
+    res.Times.add 50
+    res.Times.add 60
+    res.Times.add 70
+    res.Times.add 80
+    res.Times.add 90
+    res.Times.add 100
     
-    Dim arrBearings As VBA.Collection
-    Set arrBearings = New Collection
-    
-    arrBearings.Add 0 + Rnd * 10
-    arrBearings.Add 10 + Rnd * 10
-    arrBearings.Add 20 + Rnd * 10
-    arrBearings.Add 30 + Rnd * 10
-    arrBearings.Add 40 + Rnd * 10
-    arrBearings.Add 50 + Rnd * 10
-    arrBearings.Add 60 + Rnd * 10
-    arrBearings.Add 70 + Rnd * 10
-    arrBearings.Add 80 + Rnd * 10
-    arrBearings.Add 90 + Rnd * 10
-    arrBearings.Add 100 + Rnd * 10
-    
-    Dim res As Leg
-    res = New Leg
-    res.Times = arrTimes
-    res.Bearings = arrBearings
-    
+    res.Bearings.add 0 + Rnd * 10
+    res.Bearings.add 10 + Rnd * 10
+    res.Bearings.add 20 + Rnd * 10
+    res.Bearings.add 30 + Rnd * 10
+    res.Bearings.add 40 + Rnd * 10
+    res.Bearings.add 50 + Rnd * 10
+    res.Bearings.add 60 + Rnd * 10
+    res.Bearings.add 70 + Rnd * 10
+    res.Bearings.add 80 + Rnd * 10
+    res.Bearings.add 90 + Rnd * 10
+    res.Bearings.add 100 + Rnd * 10
+        
     Set collateThisLeg = res
 
 End Function
 
 ' produce a collection of datasets
-Public Function collateTheseLegs()
-    Dim dict As Collection
-    Set dict = New Collection
+Public Function collateTheseLegs() As Legs
+    Dim res As Legs
+    Set res = New Legs
     
-    dict.Add collateThisLeg, gDATA_1
-    dict.Add collateThisLeg, gDATA_2
+    res.add collateThisLeg("Leg1")
+    res.add collateThisLeg("Leg2")
         
-    Set collateTheseLegs = dict
+    Set collateTheseLegs = res
 End Function
+
+

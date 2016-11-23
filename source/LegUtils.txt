@@ -37,21 +37,21 @@ Function SliceLegs(Times As Collection, Bearings As Collection, tNow As Double, 
         ' are we in the first half?
         If (thisTime <= tNow - halfWid) Then
             ' great, this one is ok
-            beforeTimes.Add thisTime
-            beforeBearings.Add Bearings.Item(ctr)
+            beforeTimes.add thisTime
+            beforeBearings.add Bearings.Item(ctr)
         ElseIf (thisTime >= tNow + halfWid) Then
             ' great, this one is ok
-            afterTimes.Add thisTime
-            afterBearings.Add Bearings.Item(ctr)
+            afterTimes.add thisTime
+            afterBearings.add Bearings.Item(ctr)
         End If
     Next ctr
     
     Dim results As Collection
     Set results = New Collection
-    results.Add beforeTimes, gBEFORE_TIMES
-    results.Add beforeBearings, gBEFORE_BEARINGS
-    results.Add afterTimes, gAFTER_TIMES
-    results.Add afterBearings, gAFTER_BEARINGS
+    results.add beforeTimes, gBEFORE_TIMES
+    results.add beforeBearings, gBEFORE_BEARINGS
+    results.add afterTimes, gAFTER_TIMES
+    results.add afterBearings, gAFTER_BEARINGS
     
     ' and pass out the results
     Set SliceLegs = results
@@ -62,38 +62,38 @@ Public Sub testSlicing()
     
     Debug.Print "testSlicing"
 
-    Dim data As Collection
+    Dim data As Legs
     Set data = collateTheseLegs
     
-    Dim track1 As Collection
-    Set track1 = data.Item(1)
+    Dim track1 As leg
+    Set track1 = data.Items(1)
     
     Dim Times As Collection
     Dim Bearings As Collection
     Set Times = New Collection
     Set Bearings = New Collection
     
-    Times.Add 100
-    Times.Add 200
-    Times.Add 300
-    Times.Add 400
-    Times.Add 500
-    Times.Add 600
-    Times.Add 700
-    Times.Add 800
-    Times.Add 900
-    Times.Add 1000
+    Times.add 100
+    Times.add 200
+    Times.add 300
+    Times.add 400
+    Times.add 500
+    Times.add 600
+    Times.add 700
+    Times.add 800
+    Times.add 900
+    Times.add 1000
     
-    Bearings.Add 30
-    Bearings.Add 40
-    Bearings.Add 50
-    Bearings.Add 60
-    Bearings.Add 70
-    Bearings.Add 80
-    Bearings.Add 90
-    Bearings.Add 100
-    Bearings.Add 110
-    Bearings.Add 210
+    Bearings.add 30
+    Bearings.add 40
+    Bearings.add 50
+    Bearings.add 60
+    Bearings.add 70
+    Bearings.add 80
+    Bearings.add 90
+    Bearings.add 100
+    Bearings.add 110
+    Bearings.add 210
     
     
     Dim slices As Collection
@@ -194,43 +194,20 @@ Public Sub testSlicing()
     
 End Sub
 
-Public Sub testReorder()
-    Dim legs As Collection
-    Set legs = New Collection
+
+Public Sub testReplaceLegs()
+    Dim tLegs As New Legs
+    Set tLegs = New Legs
     
-    ' create some sample data
-    legs.Add "one"
-    legs.Add "two"
-    legs.Add "three"
-    legs.Add "four"
-    
-    ' and loop through it
-    Dim thisLeg
     Dim ctr
-    ctr = 1
-    For Each thisLeg In legs
+    For ctr = 1 To 6
+        Dim thisLeg As New leg
+        Set thisLeg = New leg
+        thisLeg.name = "L" & ctr
+        tLegs.add thisLeg
+    Next ctr
     
-        If thisLeg = "two" Then
-            legs.Remove ctr
-            legs.Add "two b", , ctr
-            legs.Add "two a", , ctr
-        End If
-    
-        Debug.Print thisLeg
-        
-        ctr = ctr + 1
-    Next thisLeg
-    
-    Debug.Print "==="
-    
-    For Each thisLeg In legs
-  
-        Debug.Print thisLeg
-        
-        ctr = ctr + 1
-    Next thisLeg
-    
-    
+    ' ok, we have our list.  let's play about with cycling through
     
 End Sub
 

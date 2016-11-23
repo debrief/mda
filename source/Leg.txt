@@ -7,24 +7,50 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Option Explicit
 ' this is a leg, consisting of times and bearings
 
 Private pTimes As Collection
 Private pBearings As Collection
 
+' whether we have processed this leg (we don't need to process them twice)
+Private pProcessed As Boolean
+
+' the name for this leg
+Private pName As String
+
+Private Sub Class_Initialize()
+    Set pTimes = New Collection
+    Set pBearings = New Collection
+End Sub
+
 Public Property Get Times() As Collection
     Set Times = pTimes
 End Property
 
-Public Property Let Times(data As Collection)
+Public Property Set Times(data As Collection)
     Set pTimes = data
 End Property
 
 Public Property Get Bearings() As Collection
-    Set pTimes = pBearings
+    Set Bearings = pBearings
 End Property
 
-Public Property Let Bearings(data As Collection)
+Public Property Set Bearings(data As Collection)
     Set pBearings = data
 End Property
 
+Public Property Get Processed() As Boolean
+    Processed = pProcessed
+End Property
+
+Public Property Let Processed(Value As Boolean)
+    pProcessed = Value
+End Property
+
+Public Property Get name() As String
+    name = pName
+End Property
+Public Property Let name(Value As String)
+    pName = Value
+End Property

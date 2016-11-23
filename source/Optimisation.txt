@@ -48,17 +48,17 @@ Public Function sliceThisLeg(Times As Collection, Bearings As Collection, _
         tNow = Times.Item(ctr)
     
         ' ok, slice it at this point
-        Dim legs As Collection
-        Set legs = SliceLegs(Times, Bearings, tNow, zigBuffer)
+        Dim Legs As Collection
+        Set Legs = SliceLegs(Times, Bearings, tNow, zigBuffer)
         
         ' right, get the score for the two slices
         Dim beforeScore As Double, afterScore As Double
         
-        beforeScore = optimiseThis(legs.Item(LegUtils.gBEFORE_TIMES), _
-           legs.Item(LegUtils.gBEFORE_BEARINGS), optimiseThreshold)
+        beforeScore = optimiseThis(Legs.Item(LegUtils.gBEFORE_TIMES), _
+           Legs.Item(LegUtils.gBEFORE_BEARINGS), optimiseThreshold)
            
-        afterScore = optimiseThis(legs.Item(LegUtils.gAFTER_TIMES), _
-           legs.Item(LegUtils.gAFTER_BEARINGS), optimiseThreshold)
+        afterScore = optimiseThis(Legs.Item(LegUtils.gAFTER_TIMES), _
+           Legs.Item(LegUtils.gAFTER_BEARINGS), optimiseThreshold)
                    
         If (diag And Optimisation.dSLICE_SCORES) Then
             Debug.Print "Before score:" & beforeScore
@@ -69,8 +69,8 @@ Public Function sliceThisLeg(Times As Collection, Bearings As Collection, _
         Dim totalCuts As Integer
         Dim beforeLen As Integer
         Dim afterLen As Integer
-        beforeLen = legs.Item(LegUtils.gBEFORE_TIMES).Count
-        afterLen = legs.Item(LegUtils.gAFTER_TIMES).Count
+        beforeLen = Legs.Item(LegUtils.gBEFORE_TIMES).Count
+        afterLen = Legs.Item(LegUtils.gAFTER_TIMES).Count
         totalCuts = beforeLen + afterLen
 
         ' did we get any answers?
@@ -94,7 +94,7 @@ Public Function sliceThisLeg(Times As Collection, Bearings As Collection, _
                 bestSoFar = result
                 
                 ' and remember the legs
-                Set results = legs
+                Set results = Legs
             End If
         End If
         
@@ -178,7 +178,7 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
             ' create some data
             Dim data As Collection
             Set data = Tests.collateTheseLegs
-            Dim track As Leg
+            Dim track As leg
             Set track = data.Item(Tests.gDATA_2)
             Set globalTimes = track.Times
             Set globalBearings = track.Bearings
