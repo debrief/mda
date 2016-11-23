@@ -1,0 +1,198 @@
+Attribute VB_Name = "LegUtils"
+Option Explicit
+
+Public Const gBEFORE_TIMES As String = "BeforeTimes"
+Public Const gBEFORE_BEARINGS As String = "BeforeBearings"
+Public Const gAFTER_TIMES As String = "AfterTimes"
+Public Const gAFTER_BEARINGS As String = "AfterBearings"
+
+
+Function SliceLegs(times As Collection, bearings As Collection, tNow As Double, zigBuffer As Double)
+    ' work out half-buffer
+    Dim halfWid As Double
+    halfWid = zigBuffer / 2
+    Dim dLen As Integer
+    dLen = times.Count
+    
+    Dim beforeTimes As Collection
+    Set beforeTimes = New Collection
+    Dim beforeBearings As Collection
+    Set beforeBearings = New Collection
+    Dim afterTimes As Collection
+    Set afterTimes = New Collection
+    Dim afterBearings As Collection
+    Set afterBearings = New Collection
+    
+    Dim startTime As Double
+    startTime = times.Item(1)
+    
+    Dim ctr As Integer
+    For ctr = 1 To dLen
+    
+        Dim thisTime As Double
+        thisTime = times.Item(ctr)
+        Dim elapsed As Double
+        elapsed = thisTime - startTime
+    
+        ' are we in the first half?
+        If (thisTime <= tNow - halfWid) Then
+            ' great, this one is ok
+            beforeTimes.Add thisTime
+            beforeBearings.Add bearings.Item(ctr)
+        ElseIf (thisTime >= tNow + halfWid) Then
+            ' great, this one is ok
+            afterTimes.Add thisTime
+            afterBearings.Add bearings.Item(ctr)
+        End If
+    Next ctr
+    
+    Dim results As Collection
+    Set results = New Collection
+    results.Add beforeTimes, gBEFORE_TIMES
+    results.Add beforeBearings, gBEFORE_BEARINGS
+    results.Add afterTimes, gAFTER_TIMES
+    results.Add afterBearings, gAFTER_BEARINGS
+    
+    ' and pass out the results
+    Set SliceLegs = results
+    
+End Function
+
+Public Sub testSlicing()
+    
+    Debug.Print "testSlicing"
+
+    Dim data As Collection
+    Set data = collateTestData
+    
+    Dim track1 As Collection
+    Set track1 = data.Item(1)
+    
+    Dim times As Collection
+    Dim bearings As Collection
+    Set times = New Collection
+    Set bearings = New Collection
+    
+    times.Add 100
+    times.Add 200
+    times.Add 300
+    times.Add 400
+    times.Add 500
+    times.Add 600
+    times.Add 700
+    times.Add 800
+    times.Add 900
+    times.Add 1000
+    
+    bearings.Add 30
+    bearings.Add 40
+    bearings.Add 50
+    bearings.Add 60
+    bearings.Add 70
+    bearings.Add 80
+    bearings.Add 90
+    bearings.Add 100
+    bearings.Add 110
+    bearings.Add 210
+    
+    
+    Dim slices As Collection
+    Dim tNow As Double, zigBuffer As Double
+    
+    ' get ready for data results
+    Dim beforeTimes As Collection
+    Dim beforeBearings As Collection
+    Dim afterTimes As Collection
+    Dim afterBearings As Collection
+    
+    ' ok, start of track
+    tNow = 100
+    zigBuffer = 200
+    
+    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    
+    ' get results
+    Set beforeTimes = slices.Item(gBEFORE_TIMES)
+    Set beforeBearings = slices.Item(gBEFORE_BEARINGS)
+    Set afterTimes = slices.Item(gAFTER_TIMES)
+    Set afterBearings = slices.Item(gAFTER_BEARINGS)
+    
+    If (beforeTimes.Count > 0) Then
+        Debug.Print "we should have zero before"
+    End If
+    If (afterTimes.Count = 0) Then
+        Debug.Print "we should have non zero after"
+    End If
+    
+    If (beforeTimes.Count <> beforeBearings.Count) Then
+        Debug.Print "before arrays should be of same length"
+    End If
+    
+    If (afterTimes.Count <> afterBearings.Count) Then
+        Debug.Print "after arrays should be of same length"
+    End If
+    
+    ' ok, mid of track, out of phase
+    tNow = 510
+    zigBuffer = 200
+    
+    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    
+    ' get results
+    Set beforeTimes = slices.Item(gBEFORE_TIMES)
+    Set beforeBearings = slices.Item(gBEFORE_BEARINGS)
+    Set afterTimes = slices.Item(gAFTER_TIMES)
+    Set afterBearings = slices.Item(gAFTER_BEARINGS)
+    
+    If (beforeTimes.Count <> 4) Then
+        Debug.Print "we have wrong before:" & beforeTimes.Count
+    End If
+    If (afterTimes.Count <> 4) Then
+        Debug.Print "we have wrong after:" & afterTimes.Count
+    End If
+    
+    ' ok, mid of track, in phase
+    tNow = 500
+    zigBuffer = 100
+    
+    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    
+    ' get results
+    Set beforeTimes = slices.Item(gBEFORE_TIMES)
+    Set beforeBearings = slices.Item(gBEFORE_BEARINGS)
+    Set afterTimes = slices.Item(gAFTER_TIMES)
+    Set afterBearings = slices.Item(gAFTER_BEARINGS)
+    
+    If (beforeTimes.Count <> 4) Then
+        Debug.Print "we have wrong before:" & beforeTimes.Count
+    End If
+    If (afterTimes.Count <> 5) Then
+        Debug.Print "we have wrong after:" & afterTimes.Count
+    End If
+    
+        
+    ' ok, late in track, in phase
+    tNow = 900
+    zigBuffer = 200
+    
+    Set slices = SliceLegs(times, bearings, tNow, zigBuffer)
+    
+    ' get results
+    Set beforeTimes = slices.Item(gBEFORE_TIMES)
+    Set beforeBearings = slices.Item(gBEFORE_BEARINGS)
+    Set afterTimes = slices.Item(gAFTER_TIMES)
+    Set afterBearings = slices.Item(gAFTER_BEARINGS)
+    
+    If (beforeTimes.Count <> 8) Then
+        Debug.Print "we have wrong before:" & beforeTimes.Count
+    End If
+    If (afterTimes.Count <> 1) Then
+        Debug.Print "we have wrong after:" & afterTimes.Count
+    End If
+        
+    Debug.Print "==Done=="
+    
+End Sub
+
+
+

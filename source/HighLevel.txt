@@ -1,0 +1,34 @@
+Attribute VB_Name = "HighLevel"
+
+Public Const gTIMES As String = "Times"
+Public Const gBEARINGS As String = "Bearings"
+
+Sub DoCalc_Click()
+    ' populate list of ownship legs
+    
+    ' populate list of sensor data
+    
+    ' slice sensor data according to ownship legs
+    
+    ' loop through legs
+    
+      ' workout whole leg score
+      
+      ' cycle through this leg
+        
+        ' slice at this time
+        
+        ' have we created slices?
+        
+            ' calculate sum of before/after slices
+            
+            ' remember best score
+            
+      ' calculate best slice improvement over whole leg
+      
+      ' better?
+      
+        ' replace this leg with the two new legs
+    
+    ' output results
+End Sub

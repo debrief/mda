@@ -1,0 +1,131 @@
+Attribute VB_Name = "Tests"
+Option Explicit
+
+
+Public Const gDATA_1 As String = "Data 1"
+Public Const gDATA_2 As String = "Data 2"
+
+Public Sub AllTests()
+    Debug.Print "running all tests"
+    LegUtils.testSlicing
+End Sub
+
+'This code Exports all VBA modules
+Sub SaveCodeModules()
+
+    Dim i%, sName$
+    
+    With ThisWorkbook.VBProject
+        For i% = 1 To .VBComponents.Count
+            If .VBComponents(i%).CodeModule.CountOfLines > 0 Then
+                Dim outPath
+                sName$ = .VBComponents(i%).CodeModule.Name
+                outPath = Application.ActiveWorkbook.Path & "\source\" & sName$ & ".txt"
+                .VBComponents(i%).Export outPath
+            End If
+        Next i
+    End With
+    
+End Sub
+
+' run through a test
+Public Sub testMe()
+    ' clear the console
+    clearDebugConsole
+
+    Dim dataset As Collection
+    Set dataset = collateTestData
+    
+    Dim thisData As Object
+    Set thisData = dataset.Item(Tests.gDATA_2)
+    
+    Dim arrTimes As Collection
+    Dim arrBearings As Collection
+    Set arrTimes = thisData.Item(HighLevel.gTIMES)
+    Set arrBearings = thisData.Item(HighLevel.gBEARINGS)
+    
+    Debug.Print "found " & arrBearings.Count & " bearings."
+    
+    Dim thisScore As Double, zigOffset As Double
+    Dim threshold As Double, sliceDelta As Double
+    zigOffset = 20
+    threshold = 1
+    sliceDelta = 0.1
+    
+    Dim diagnostics As Integer
+    diagnostics = Optimisation.dSLICE_SCORES
+    
+    Dim slices As Collection
+    Set slices = sliceThisLeg(arrTimes, arrBearings, zigOffset, threshold, sliceDelta, diagnostics)
+    
+    Dim beforeTimes As Collection
+    Dim beforeBearings As Collection
+    Dim afterTimes As Collection
+    Dim afterBearings As Collection
+    
+    If (slices.Count = 0) Then
+        Debug.Print "Failed to improve on single leg"
+    Else
+        Set beforeTimes = slices.Item(LegUtils.gBEFORE_TIMES)
+        Set beforeBearings = slices.Item(LegUtils.gBEFORE_BEARINGS)
+        Set afterTimes = slices.Item(LegUtils.gAFTER_TIMES)
+        Set afterBearings = slices.Item(LegUtils.gAFTER_BEARINGS)
+        
+        Debug.Print "L1:" & beforeTimes.Item(0) & " to:" & beforeTimes.Item(beforeTimes.Count)
+        Debug.Print "L2:" & afterTimes.Item(0) & " to:" & afterTimes.Item(beforeTimes.Count)
+    End If
+    
+End Sub
+
+' produce a single composite time/bearing dataset
+Private Function collateThisDataset()
+    Dim arrTimes As Collection
+    Set arrTimes = New Collection
+    
+    arrTimes.Add 0
+    arrTimes.Add 10
+    arrTimes.Add 20
+    arrTimes.Add 30
+    arrTimes.Add 40
+    arrTimes.Add 50
+    arrTimes.Add 60
+    arrTimes.Add 70
+    arrTimes.Add 80
+    arrTimes.Add 90
+    arrTimes.Add 100
+    
+    Dim arrBearings As VBA.Collection
+    Set arrBearings = New Collection
+    
+    arrBearings.Add 0 + Rnd * 10
+    arrBearings.Add 10 + Rnd * 10
+    arrBearings.Add 20 + Rnd * 10
+    arrBearings.Add 30 + Rnd * 10
+    arrBearings.Add 40 + Rnd * 10
+    arrBearings.Add 50 + Rnd * 10
+    arrBearings.Add 60 + Rnd * 10
+    arrBearings.Add 70 + Rnd * 10
+    arrBearings.Add 80 + Rnd * 10
+    arrBearings.Add 90 + Rnd * 10
+    arrBearings.Add 100 + Rnd * 10
+
+    Dim dict As Collection
+    Set dict = New Collection
+    
+    dict.Add arrTimes, gTIMES
+    dict.Add arrBearings, gBEARINGS
+    
+    Set collateThisDataset = dict
+
+End Function
+
+' produce a collection of datasets
+Public Function collateTestData()
+    Dim dict As Collection
+    Set dict = New Collection
+    
+    dict.Add collateThisDataset, gDATA_1
+    dict.Add collateThisDataset, gDATA_2
+        
+    Set collateTestData = dict
+End Function
