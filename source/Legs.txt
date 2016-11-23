@@ -26,30 +26,68 @@ Public Sub add(leg As leg)
     pLegs.add leg, leg.name
 End Sub
 
-Public Sub replace(original As leg, Optional before As leg, Optional after As leg)
+Public Property Get complete() As Boolean
+    ' check if all the legs are complete
+    Dim thisLeg As leg
+    For Each thisLeg In pLegs
+        If Not thisLeg.Processed Then
+            complete = False
+            Exit Property
+        End If
+    Next thisLeg
+    complete = True
+End Property
+
+Public Sub replace(original As leg, before As leg, after As leg)
    
     ' ok, swap the original for the new ones
+    pLegs.add before, before.name, original.name
+    pLegs.add after, after.name, original.name
+    pLegs.Remove original.name
 End Sub
 
 Public Function determineTargetLegs() As Legs
     ' loop through legs
+    While pLegs.complete <> True
+        ' ok, loop through them
+        Dim thisLeg As leg
+        For Each thisLeg In pLegs.Items
+            If Not thisLeg.Processed Then
     
-      ' workout whole leg score
-      
-      ' cycle through this leg
-        
-        ' slice at this time
-        
-        ' have we created slices?
-        
-            ' calculate sum of before/after slices
-            
-            ' remember best score
-            
-      ' calculate best slice improvement over whole leg
-      
-      ' better?
-      
-        ' replace this leg with the two new legs
+                ' workout whole leg score
+                
+                ' cycle through this leg
+                
+                Dim bestLegs As Legs
+                  
+                  ' slice at this time
+                  
+                  ' have we created slices?
+                  
+                      ' calculate sum of before/after slices
+                      
+                      ' remember best score
+                      
+                ' calculate best slice improvement over whole leg
+                
+                ' better?
+                
+                  ' replace this leg with the two new legs
+                
+                
+                
+'                If thisLeg.name = "L2" Then
+'                    ' ok, do the replace
+'                    pLegs.replace thisLeg, beforeLeg, afterLeg
+'
+'                    ' ok, we need to drop out of this loop
+'                    Exit For
+                'testStr = testStr & thisLeg.name & ","
+                'thisLeg.Processed = True
+            End If
+        Next thisLeg
+    Wend
+    
     
 End Function
+

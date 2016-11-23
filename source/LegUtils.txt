@@ -181,6 +181,8 @@ End Sub
 
 
 Public Sub testReplaceLegs()
+    Debug.Print "testReplaceLegs"
+
     Dim tLegs As New Legs
     Set tLegs = New Legs
     
@@ -193,7 +195,37 @@ Public Sub testReplaceLegs()
     
     ' ok, we have our list.  let's play about with cycling through
     Dim beforeLeg As leg
+    Set beforeLeg = Factory.createLeg("L2.1")
     Dim afterLeg As leg
+    Set afterLeg = Factory.createLeg("L2.2")
+    
+    ' ok, we're going to swap L2 for L2.1 and L2.2
+    
+    Dim testStr As String
+    
+    While tLegs.complete <> True
+        ' ok, loop through them
+        For Each thisLeg In tLegs.Items
+            If Not thisLeg.Processed Then
+                ' ok, we need to process it
+                
+                If thisLeg.name = "L2" Then
+                    ' ok, do the replace
+                    tLegs.replace thisLeg, beforeLeg, afterLeg
+                    
+                    ' ok, we need to drop out of this loop
+                    Exit For
+                Else
+                    testStr = testStr & thisLeg.name & ","
+                    thisLeg.Processed = True
+                End If
+            End If
+        Next thisLeg
+    Wend
+    
+    If (testStr <> "L1,L2.1,L2.2,L3,L4,L5,L6,") Then
+        Debug.Print "Haven't processed legs correctly"
+    End If
     
 End Sub
 

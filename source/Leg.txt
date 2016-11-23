@@ -24,6 +24,7 @@ Private pName As String
 Private Sub Class_Initialize()
     Set pTimes = New Collection
     Set pBearings = New Collection
+    pProcessed = False
 End Sub
 
 Public Property Get times() As Collection

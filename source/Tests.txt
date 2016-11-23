@@ -6,6 +6,7 @@ Public Sub AllTests()
     Debug.Print "== running all tests =="
     LegUtils.testSlicing
     LegUtils.testReplaceLegs
+    Tests.testIncomplete
     Debug.Print "==  tests complete   =="
 End Sub
 
@@ -118,4 +119,42 @@ Public Function collateTheseLegs() As Legs
     Set collateTheseLegs = res
 End Function
 
+Public Sub testIncomplete()
+    Debug.Print "testIncomplete"
 
+    Dim L1 As leg, L2 As leg, L3 As leg
+    Set L1 = Factory.createLeg("L1")
+    Set L2 = Factory.createLeg("L2")
+    Set L3 = Factory.createLeg("L3")
+    
+    Dim tLegs As Legs
+    Set tLegs = New Legs
+    
+    tLegs.add L1
+    tLegs.add L2
+    tLegs.add L3
+    
+    If (tLegs.complete) Then
+        Debug.Print "Should not be complete 1"
+    End If
+    
+    L1.Processed = True
+    
+    If (tLegs.complete) Then
+        Debug.Print "Should not be complete 2"
+    End If
+    
+    L3.Processed = True
+    
+    If (tLegs.complete) Then
+        Debug.Print "Should not be complete 3"
+    End If
+    
+    L2.Processed = True
+    
+    If (Not tLegs.complete) Then
+        Debug.Print "Should be complete 4"
+    End If
+    
+    
+End Sub
