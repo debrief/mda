@@ -26,19 +26,19 @@ Private Sub Class_Initialize()
     Set pBearings = New Collection
 End Sub
 
-Public Property Get Times() As Collection
-    Set Times = pTimes
+Public Property Get times() As Collection
+    Set times = pTimes
 End Property
 
-Public Property Set Times(data As Collection)
+Public Property Set times(data As Collection)
     Set pTimes = data
 End Property
 
-Public Property Get Bearings() As Collection
-    Set Bearings = pBearings
+Public Property Get bearings() As Collection
+    Set bearings = pBearings
 End Property
 
-Public Property Set Bearings(data As Collection)
+Public Property Set bearings(data As Collection)
     Set pBearings = data
 End Property
 

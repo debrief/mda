@@ -45,8 +45,8 @@ Public Sub testOptimisation()
     
     Dim arrTimes As Collection
     Dim arrBearings As Collection
-    Set arrTimes = thisData.Times
-    Set arrBearings = thisData.Bearings
+    Set arrTimes = thisData.times
+    Set arrBearings = thisData.bearings
     
     Debug.Print "found " & arrBearings.Count & " bearings."
     
@@ -59,24 +59,20 @@ Public Sub testOptimisation()
     Dim diagnostics As Integer
     diagnostics = Optimisation.dSLICE_SCORES
     
-    Dim slices As Collection
-    Set slices = sliceThisLeg(arrTimes, arrBearings, zigOffset, threshold, sliceDelta, diagnostics)
+    Dim slices As Legs
+    Set slices = sliceThisLeg(thisData, zigOffset, threshold, sliceDelta, diagnostics)
     
-    Dim beforeTimes As Collection
-    Dim beforeBearings As Collection
-    Dim afterTimes As Collection
-    Dim afterBearings As Collection
+    Dim before As leg
+    Dim after As leg
     
-    If (slices.Count = 0) Then
+    If (slices.Items.Count = 0) Then
         Debug.Print "Failed to improve on single leg"
     Else
-        Set beforeTimes = slices.Item(LegUtils.gBEFORE_TIMES)
-        Set beforeBearings = slices.Item(LegUtils.gBEFORE_BEARINGS)
-        Set afterTimes = slices.Item(LegUtils.gAFTER_TIMES)
-        Set afterBearings = slices.Item(LegUtils.gAFTER_BEARINGS)
+        Set before = slices.Items(1)
+        Set after = slices.Items(2)
         
-        Debug.Print "L1:" & beforeTimes.Item(0) & " to:" & beforeTimes.Item(beforeTimes.Count)
-        Debug.Print "L2:" & afterTimes.Item(0) & " to:" & afterTimes.Item(beforeTimes.Count)
+        Debug.Print "L1:" & before.times.Item(0) & " to:" & before.times.Item(before.times.Count)
+        Debug.Print "L2:" & after.times.Item(0) & " to:" & after.times.Item(before.times.Count)
     End If
     
 End Sub
@@ -87,29 +83,29 @@ Private Function collateThisLeg(name As String) As leg
     Dim res As leg
     Set res = Factory.createLeg(name)
     
-    res.Times.add 0
-    res.Times.add 10
-    res.Times.add 20
-    res.Times.add 30
-    res.Times.add 40
-    res.Times.add 50
-    res.Times.add 60
-    res.Times.add 70
-    res.Times.add 80
-    res.Times.add 90
-    res.Times.add 100
+    res.times.add 0
+    res.times.add 10
+    res.times.add 20
+    res.times.add 30
+    res.times.add 40
+    res.times.add 50
+    res.times.add 60
+    res.times.add 70
+    res.times.add 80
+    res.times.add 90
+    res.times.add 100
     
-    res.Bearings.add 0 + Rnd * 10
-    res.Bearings.add 10 + Rnd * 10
-    res.Bearings.add 20 + Rnd * 10
-    res.Bearings.add 30 + Rnd * 10
-    res.Bearings.add 40 + Rnd * 10
-    res.Bearings.add 50 + Rnd * 10
-    res.Bearings.add 60 + Rnd * 10
-    res.Bearings.add 70 + Rnd * 10
-    res.Bearings.add 80 + Rnd * 10
-    res.Bearings.add 90 + Rnd * 10
-    res.Bearings.add 100 + Rnd * 10
+    res.bearings.add 0 + Rnd * 10
+    res.bearings.add 10 + Rnd * 10
+    res.bearings.add 20 + Rnd * 10
+    res.bearings.add 30 + Rnd * 10
+    res.bearings.add 40 + Rnd * 10
+    res.bearings.add 50 + Rnd * 10
+    res.bearings.add 60 + Rnd * 10
+    res.bearings.add 70 + Rnd * 10
+    res.bearings.add 80 + Rnd * 10
+    res.bearings.add 90 + Rnd * 10
+    res.bearings.add 100 + Rnd * 10
         
     Set collateThisLeg = res
 

@@ -31,3 +31,25 @@ Public Sub replace(original As leg, Optional before As leg, Optional after As le
     ' ok, swap the original for the new ones
 End Sub
 
+Public Function determineTargetLegs() As Legs
+    ' loop through legs
+    
+      ' workout whole leg score
+      
+      ' cycle through this leg
+        
+        ' slice at this time
+        
+        ' have we created slices?
+        
+            ' calculate sum of before/after slices
+            
+            ' remember best score
+            
+      ' calculate best slice improvement over whole leg
+      
+      ' better?
+      
+        ' replace this leg with the two new legs
+    
+End Function
