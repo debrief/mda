@@ -9,6 +9,8 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 ' this is a leg, consisting of times and bearings
+' == It's made into a class so that we collect the data
+' == for a leg into one place
 
 Private pTimes As Collection
 Private pBearings As Collection

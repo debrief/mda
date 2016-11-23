@@ -8,6 +8,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
+' this is series of legs
+' == It's made into a class so that it have custom processing,
+' == such as a replace operation that re-orders the children
 
 Dim pLegs As Collection
 
@@ -18,7 +21,6 @@ End Sub
 Public Property Get Items() As Collection
     Set Items = pLegs
 End Property
-
 
 Public Sub add(leg As leg)
     pLegs.add leg, leg.name
