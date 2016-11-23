@@ -32,15 +32,16 @@ Sub SaveCodeModules()
 End Sub
 
 ' run through a test
-Public Sub testMe()
+Public Sub testOptimisation()
     ' clear the console
     clearDebugConsole
 
-    Dim dataset As Collection
+    Dim dataset As Legs
     Set dataset = Tests.collateTheseLegs
     
     Dim thisData As leg
-    Set thisData = dataset.Item(Tests.gDATA_2)
+    Set thisData = dataset.Items(2)
+    
     
     Dim arrTimes As Collection
     Dim arrBearings As Collection
@@ -84,8 +85,7 @@ End Sub
 Private Function collateThisLeg(name As String) As leg
 
     Dim res As leg
-    Set res = New leg
-    res.name = name
+    Set res = Factory.createLeg(name)
     
     res.Times.add 0
     res.Times.add 10

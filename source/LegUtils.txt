@@ -202,12 +202,13 @@ Public Sub testReplaceLegs()
     Dim ctr
     For ctr = 1 To 6
         Dim thisLeg As New leg
-        Set thisLeg = New leg
-        thisLeg.name = "L" & ctr
+        Set thisLeg = Factory.createLeg("L" & ctr)
         tLegs.add thisLeg
     Next ctr
     
     ' ok, we have our list.  let's play about with cycling through
+    Dim beforeLeg As leg
+    Dim afterLeg As leg
     
 End Sub
 

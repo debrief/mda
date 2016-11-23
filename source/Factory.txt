@@ -1,0 +1,11 @@
+Attribute VB_Name = "Factory"
+Option Explicit
+
+' create (and initialise) a new leg
+Public Function createLeg(name As String) As leg
+    Dim res As New leg
+    res.name = name
+    Set createLeg = res
+End Function
+
+
