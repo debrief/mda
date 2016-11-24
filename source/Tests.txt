@@ -9,6 +9,7 @@ Public Sub AllTests()
     Tests.testIncomplete
     Collate.testGetOwnshipLegs
     Collate.testGetSensorLegs
+    Tests.testFullCycle
     Debug.Print "==  tests complete   =="
 End Sub
 
@@ -34,7 +35,7 @@ End Sub
 Public Sub testOptimisation()
 
     Dim dataset As Legs
-    Set dataset = Tests.collateTheseLegs
+    Set dataset = Tests.createDemoLegs
     
     Dim thisData As Leg
     Set thisData = dataset.Items(2)
@@ -109,15 +110,30 @@ Private Function collateThisLeg(name As String) As Leg
 End Function
 
 ' produce a collection of datasets
-Public Function collateTheseLegs() As Legs
+Public Function createDemoLegs() As Legs
     Dim res As Legs
     Set res = New Legs
     
     res.add collateThisLeg("Leg1")
     res.add collateThisLeg("Leg2")
         
-    Set collateTheseLegs = res
+    Set createDemoLegs = res
 End Function
+
+Public Sub testFullCycle()
+    Debug.Print "testFullCycle"
+    
+    Dim data As Legs
+    Set data = Tests.createDemoLegs
+    
+    Dim res As Legs
+    Set res = data.determineTargetLegs
+    
+    If res.Items.Count <> 4 Then
+        Debug.Print "failed to find four legs, found:" & res.Items.Count
+    End If
+    
+End Sub
 
 Public Sub testIncomplete()
     Debug.Print "testIncomplete"

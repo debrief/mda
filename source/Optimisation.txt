@@ -186,7 +186,7 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
             Debug.Print "creating globs"
             ' create some data
             Dim data As Collection
-            Set data = Tests.collateTheseLegs
+            Set data = Tests.createDemoLegs
             Dim track As Leg
             Set track = data.Item(1)
             Set globalLeg = track
