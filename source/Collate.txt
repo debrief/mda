@@ -8,8 +8,8 @@ Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
 Public Function getSensorLegs() As Legs
     
     ' get ready to store results
-    Dim res As Leg
-    res = Factory.createLeg("All data")
+    Dim res As Legs
+    Set res = New Legs
     
     ' get the data using the named range
     
@@ -37,6 +37,27 @@ Public Function getSensorLegs() As Legs
     Set getSensorLegs = res
  
 End Function
+
+' test that we correctly read in ownship legs
+Public Sub testGetSensorLegs()
+    Debug.Print "testGetSensorLegs"
+    
+    Dim res As Legs
+    Set res = getSensorLegs
+    
+    If res Is Nothing Then
+        Debug.Print "didn't get anything"
+    End If
+    
+    If res.Items.Count = 0 Then
+        Debug.Print "didn't get any rows"
+    End If
+    
+    If res.Items.Count <> 19 Then ' put in expected number of rows
+        Debug.Print "Didn't get " & 19 & " rows, got:" & res.Items.Count
+    End If
+    
+End Sub
 
 ' aah, I produced this when I thought we needed a
 ' list of ownship legs. But, the analysis data is
