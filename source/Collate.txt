@@ -1,0 +1,128 @@
+Attribute VB_Name = "Collate"
+Option Explicit
+
+Const OWNSHIP_LEGS_RANGE = "dOwnshipLegs"
+Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
+
+' this module contains code to move data between VBA and the worksheet
+Public Function getSensorLegs() As Legs
+    
+    ' get ready to store results
+    Dim res As Leg
+    res = Factory.createLeg("All data")
+    
+    ' get the data using the named range
+    
+    ' loop through the row
+        ' is this a valid row?
+            
+            ' yes, ok = handle it
+        
+                ' get this time
+                
+                ' get this bearing
+                
+                ' get this leg name
+                
+                ' have we already create this leg?
+                
+                    ' no, create leg
+                    
+                    ' store the leg (with name as key)
+                    
+                ' add the time & bearing
+            
+            ' no, drop out of the for loop
+        
+    Set getSensorLegs = res
+ 
+End Function
+
+Public Function getOwnshipLegs() As Collection
+    ' get the data
+    Dim data As Range
+    Set data = Range(OWNSHIP_LEGS_RANGE)
+    
+    ' ready to store results
+    Dim res As Collection
+    Set res = New Collection
+    
+    Dim thisRow As Range
+    Dim ctr As Integer
+    Dim thisLeg As OwnshipLeg
+    ctr = 0
+    For Each thisRow In data.Rows
+        If ctr = 0 Then
+            ' ok, skip the first row
+        Else
+            Dim secs As Integer
+            Dim legName As String
+            secs = thisRow.Cells(1, 1)
+            legName = thisRow.Cells(1, 2).Text
+            
+            ' did it work
+            If (legName <> "") Then
+            
+                ' is this a new leg?
+                If Not (legName = "#N/A") Then
+                    ' ok, new leg
+                    Set thisLeg = New OwnshipLeg
+                    thisLeg.StartTime = secs
+                Else
+                    thisLeg.EndTime = secs
+                    
+                    ' and remember it
+                    res.add thisLeg
+                End If
+            Else
+                ' ok, we're done
+                Exit For
+            End If
+        End If
+        
+        ctr = ctr + 1
+    Next thisRow
+        
+    Set getOwnshipLegs = res
+    
+End Function
+
+Public Function sliceSensorData(sensorData As Leg, ownshipLegs As Collection)
+    Dim res As Legs
+    Set res = New Legs
+    
+    ' loop through ownship data
+        ' loop through sensor legs
+        
+        ' is this sensor cut in this ownship leg?
+        
+            ' no, ignore
+            
+            ' have we already created a sensor leg for this leg?
+            
+                ' no, create one
+                
+            ' add sensor cut to this sensor leg
+    
+    Set sliceSensorData = res
+End Function
+
+Public Sub testGetOwnshipLegs()
+    Debug.Print "testGetOwnshipLegs"
+    
+    Dim res As Collection
+    Set res = getOwnshipLegs
+    
+    If res Is Nothing Then
+        Debug.Print "didn't get anything"
+    End If
+    
+    If res.Count = 0 Then
+        Debug.Print "didn't get any rows"
+    End If
+    
+    If res.Count <> 19 Then
+        Debug.Print "Didn't get " & 19 & " rows, got:" & res.Count
+    End If
+    
+End Sub
