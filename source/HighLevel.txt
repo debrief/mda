@@ -1,11 +1,9 @@
 Attribute VB_Name = "HighLevel"
 
 Sub DoCalc_Click()
-    ' populate list of ownship legs
-    
     ' populate list of sensor data
-    
-    ' slice sensor data according to ownship legs
+    Dim sensorLegs As Legs
+    sensorLegs = Collate.getSensorLegs()
     
     ' loop through legs
     

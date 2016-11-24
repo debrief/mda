@@ -10,7 +10,7 @@ Public Const dOPTIMISE_SCORES = 2
 
 ' we use thia global to store the data we're using for the
 ' in-worksheet optimiser
-Private globalLeg As leg
+Private globalLeg As Leg
 
 ' way of passing diangostic level to the optimiser code
 Private globalDiag As Long
@@ -21,7 +21,7 @@ Private globalDiag As Long
 ' zigBuffer: the time period we allow for a turn
 ' optimiseThreshold: when optimisation is stable
 ' sliceDelta: how much better the slices have to be
-Public Function sliceThisLeg(thisLeg As leg, _
+Public Function sliceThisLeg(thisLeg As Leg, _
     zigBuffer As Double, optimiseThreshold As Double, sliceDelta As Double, _
     diag As Integer) As Legs
     
@@ -52,7 +52,7 @@ Public Function sliceThisLeg(thisLeg As leg, _
         Dim theLegs As Legs
         Set theLegs = SliceIntoLegs(thisLeg, tNow, zigBuffer)
         
-        Dim before As leg, after As leg
+        Dim before As Leg, after As Leg
         Set before = theLegs.Items(1)
         Set after = theLegs.Items(2)
         
@@ -111,8 +111,7 @@ Public Function sliceThisLeg(thisLeg As leg, _
     
 End Function
 
-
-Private Function scoreFor(thisLeg As leg, threshold As Double) As Double
+Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
 
     Dim result As Double
     result = 0
@@ -180,7 +179,7 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
             ' create some data
             Dim data As Collection
             Set data = Tests.collateTheseLegs
-            Dim track As leg
+            Dim track As Leg
             Set track = data.Item(1)
             Set globalLeg = track
         End If
@@ -188,8 +187,8 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
         Set times = globalLeg.times
         Set bearings = globalLeg.bearings
         
-        Dim startTime
-        startTime = times.Item(1)
+        Dim StartTime
+        StartTime = times.Item(1)
     
         ' ok, loop through the times
         Dim counter As Integer
@@ -199,7 +198,7 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
             thisTime = times.Item(counter)
             
             Dim elapsed As Double
-            elapsed = thisTime - startTime
+            elapsed = thisTime - StartTime
             
             Dim thisBearing
             thisBearing = bearings.Item(counter)
@@ -253,7 +252,7 @@ Public Sub testOptimise()
     Debug.Print "Test optimise"
     
     ' ok, create a straight line leg
-    Dim testLeg As leg
+    Dim testLeg As Leg
     Set testLeg = Factory.createLeg("Straight")
     
     With testLeg.times

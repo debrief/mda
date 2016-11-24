@@ -1,11 +1,11 @@
 Attribute VB_Name = "LegUtils"
 Option Explicit
 
-Function SliceIntoLegs(thisLeg As leg, tNow As Double, zigBuffer As Double) As Legs
+Function SliceIntoLegs(thisLeg As Leg, tNow As Double, zigBuffer As Double) As Legs
         
-    Dim beforeLeg As leg
+    Dim beforeLeg As Leg
     Set beforeLeg = Factory.createLeg(thisLeg.name + ".1")
-    Dim afterLeg As leg
+    Dim afterLeg As Leg
     Set afterLeg = Factory.createLeg(thisLeg.name + ".2")
     
     Dim times As Collection
@@ -19,8 +19,8 @@ Function SliceIntoLegs(thisLeg As leg, tNow As Double, zigBuffer As Double) As L
     Dim dLen As Integer
     dLen = times.Count
     
-    Dim startTime As Double
-    startTime = times.Item(1)
+    Dim StartTime As Double
+    StartTime = times.Item(1)
     
     Dim ctr As Integer
     For ctr = 1 To dLen
@@ -28,7 +28,7 @@ Function SliceIntoLegs(thisLeg As leg, tNow As Double, zigBuffer As Double) As L
         Dim thisTime As Double
         thisTime = times.Item(ctr)
         Dim elapsed As Double
-        elapsed = thisTime - startTime
+        elapsed = thisTime - StartTime
     
         ' are we in the first half?
         If (thisTime <= tNow - halfWid) Then
@@ -60,8 +60,8 @@ Public Sub testSlicing()
     Dim data As Legs
     Set data = New Legs
     
-    Dim track1 As leg
-    Set track1 = New leg
+    Dim track1 As Leg
+    Set track1 = New Leg
     
     Dim times As Collection
     Dim bearings As Collection
@@ -95,8 +95,8 @@ Public Sub testSlicing()
     Dim tNow As Double, zigBuffer As Double
     
     ' get ready for data results
-    Dim before As leg
-    Dim after As leg
+    Dim before As Leg
+    Dim after As Leg
     
     ' ok, start of track
     tNow = 100
@@ -174,11 +174,8 @@ Public Sub testSlicing()
     If (after.times.Count <> 1) Then
         Debug.Print "we have wrong after:" & after.times.Count
     End If
-        
-    Debug.Print "==Done=="
     
 End Sub
-
 
 Public Sub testReplaceLegs()
     Debug.Print "testReplaceLegs"
@@ -188,15 +185,15 @@ Public Sub testReplaceLegs()
     
     Dim ctr
     For ctr = 1 To 6
-        Dim thisLeg As New leg
+        Dim thisLeg As New Leg
         Set thisLeg = Factory.createLeg("L" & ctr)
         tLegs.add thisLeg
     Next ctr
     
     ' ok, we have our list.  let's play about with cycling through
-    Dim beforeLeg As leg
+    Dim beforeLeg As Leg
     Set beforeLeg = Factory.createLeg("L2.1")
-    Dim afterLeg As leg
+    Dim afterLeg As Leg
     Set afterLeg = Factory.createLeg("L2.2")
     
     ' ok, we're going to swap L2 for L2.1 and L2.2

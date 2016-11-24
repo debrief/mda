@@ -22,13 +22,13 @@ Public Property Get Items() As Collection
     Set Items = pLegs
 End Property
 
-Public Sub add(leg As leg)
-    pLegs.add leg, leg.name
+Public Sub add(Leg As Leg)
+    pLegs.add Leg, Leg.name
 End Sub
 
 Public Property Get complete() As Boolean
     ' check if all the legs are complete
-    Dim thisLeg As leg
+    Dim thisLeg As Leg
     For Each thisLeg In pLegs
         If Not thisLeg.Processed Then
             complete = False
@@ -38,7 +38,7 @@ Public Property Get complete() As Boolean
     complete = True
 End Property
 
-Public Sub replace(original As leg, before As leg, after As leg)
+Public Sub replace(original As Leg, before As Leg, after As Leg)
    
     ' ok, swap the original for the new ones
     pLegs.add before, before.name, original.name
@@ -50,7 +50,7 @@ Public Function determineTargetLegs() As Legs
     ' loop through legs
     While pLegs.complete <> True
         ' ok, loop through them
-        Dim thisLeg As leg
+        Dim thisLeg As Leg
         For Each thisLeg In pLegs.Items
             If Not thisLeg.Processed Then
     
