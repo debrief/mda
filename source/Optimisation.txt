@@ -28,6 +28,9 @@ Public Function sliceThisLeg(thisLeg As Leg, _
     Dim results As Legs
     Set results = New Legs
     
+    Dim calcs As Collection
+    Set calcs = results.calcs
+    
     ' ok, find the overall score
     thisLeg.OptimiseScore = scoreFor(thisLeg, optimiseThreshold)
     
@@ -71,7 +74,7 @@ Public Function sliceThisLeg(thisLeg As Leg, _
         beforeLen = before.times.Count
         afterLen = after.times.Count
         totalCuts = beforeLen + afterLen
-
+                
         ' did we get any answers?
         If (before.OptimiseScore > 0) And (after.OptimiseScore > 0) Then
             ' ok, normalise their scores
@@ -81,6 +84,11 @@ Public Function sliceThisLeg(thisLeg As Leg, _
             ' and calculate the result
             Dim result As Double
             result = before.OptimiseScore + after.OptimiseScore
+            
+            ' store the calculations
+            Dim thisCalc As CalcDetail
+            Set thisCalc = New CalcDetail
+            thisCalc.setScores tNow, before.OptimiseScore, after.OptimiseScore, result
             
             ' is it better?
             If (result < bestSoFar) Then

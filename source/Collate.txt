@@ -59,6 +59,50 @@ Public Sub testGetSensorLegs()
     
 End Sub
 
+' put the set of legs into the spreadsheet
+Public Sub showTargetLegs(data As Legs)
+    ' retrieve the target range
+    Dim tRange As Range
+    
+    
+    ' keep track of how many rows we're gone through
+    Dim ctr As Integer
+    ctr = 1
+    
+    ' loop through the legs
+    Dim thisL As Leg
+    For Each thisL In data
+    
+        ' get the values
+        Dim tStart As Double, tEnd As Double
+        tStart = thisL.times.Item(0)
+        tEnd = thisL.times.Item(thisL.times.Count)
+    
+        ' output start time
+        
+        ' output peak value
+        
+        ' output end time
+        
+        ' output peak value
+    Next thisL
+End Sub
+
+Public Sub showCalculations(data As Collection)
+    ' get the target range
+    
+    ' loop through the rows
+    
+    ' get this time (using the key)
+    
+    ' get the calculation at this time
+    
+    ' output the calculations
+    
+End Sub
+
+
+
 ' aah, I produced this when I thought we needed a
 ' list of ownship legs. But, the analysis data is
 ' already tagged with the ownship leg, so we don't need it

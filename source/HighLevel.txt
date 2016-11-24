@@ -5,25 +5,13 @@ Sub DoCalc_Click()
     Dim sensorLegs As Legs
     sensorLegs = Collate.getSensorLegs()
     
-    ' loop through legs
+    ' ok, now slice them
+    Dim targetLegs As Legs
+    Set targetLegs = sensorLegs.determineTargetLegs
     
-      ' workout whole leg score
-      
-      ' cycle through this leg
-        
-        ' slice at this time
-        
-        ' have we created slices?
-        
-            ' calculate sum of before/after slices
-            
-            ' remember best score
-            
-      ' calculate best slice improvement over whole leg
-      
-      ' better?
-      
-        ' replace this leg with the two new legs
+    ' also output the component calculations
+    Collate.showCalculations targetLegs.calcs
     
-    ' output results
+    ' ok, now share the good news
+    Collate.showTargetLegs targetLegs
 End Sub
