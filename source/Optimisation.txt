@@ -253,7 +253,7 @@ Private Function forecastValue(elapsedTime, B As Double, P As Double, Q As Doubl
     Dim dx, dy
     dx = Cos(toRad(B)) + Q * elapsedTime
     dy = Sin(toRad(B)) + P * elapsedTime
-    forecastValue = Excel.WorksheetFunction.Atan2(dy, dx)
+    forecastValue = Excel.WorksheetFunction.Atan2(dx, dy)
 End Function
 
 Public Sub testOptimise()
