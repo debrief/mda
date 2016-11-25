@@ -24,10 +24,13 @@ Private pName As String
 ' the overall score for this leg
 Private pOptimiseScore As Double
 
+' keep track of the calculations used to produce this leg
+Private pCalculations As Collection
 
 Private Sub Class_Initialize()
     Set pTimes = New Collection
     Set pBearings = New Collection
+    Set pCalculations = New Collection
     pProcessed = False
     pOptimiseScore = 0
 End Sub
@@ -40,6 +43,13 @@ Public Property Let OptimiseScore(value As Double)
     pOptimiseScore = value
 End Property
 
+Public Property Get calcs() As Collection
+    Set calcs = pCalculations
+End Property
+
+Public Property Get hasData() As Boolean
+    hasData = pTimes.Count >= 2
+End Property
 
 Public Property Get times() As Collection
     Set times = pTimes

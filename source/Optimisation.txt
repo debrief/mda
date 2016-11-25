@@ -26,10 +26,6 @@ Public Function sliceThisLeg(thisLeg As Leg, _
     diag As Integer) As Legs
     
     Dim results As Legs
-    Set results = New Legs
-    
-    Dim calcs As Collection
-    Set calcs = results.calcs
     
     ' ok, find the overall score
     thisLeg.OptimiseScore = scoreFor(thisLeg, optimiseThreshold)
@@ -59,60 +55,67 @@ Public Function sliceThisLeg(thisLeg As Leg, _
         Set before = theLegs.Items(1)
         Set after = theLegs.Items(2)
         
-        ' right, get the score for the two slices
-        before.OptimiseScore = scoreFor(before, optimiseThreshold)
-        after.OptimiseScore = scoreFor(after, optimiseThreshold)
-                   
-        If (diag And Optimisation.dSLICE_SCORES) Then
-            Debug.Print tNow & " - Before score:" & before.OptimiseScore & ", After score:" & after.OptimiseScore
-        End If
-                   
-        ' find the leg lengths (ready to normalise)
-        Dim totalCuts As Integer
-        Dim beforeLen As Integer
-        Dim afterLen As Integer
-        beforeLen = before.times.Count
-        afterLen = after.times.Count
-        totalCuts = beforeLen + afterLen
+        ' ok, we only both with the calcs if we actually have items
+        If before.hasData And after.hasData Then
+            
+            ' right, get the score for the two slices
+            before.OptimiseScore = scoreFor(before, optimiseThreshold)
+            after.OptimiseScore = scoreFor(after, optimiseThreshold)
+                       
+            If (diag And Optimisation.dSLICE_SCORES) Then
+                Debug.Print tNow & " - Before score:" & before.OptimiseScore & ", After score:" & after.OptimiseScore
+            End If
+                       
+            ' find the leg lengths (ready to normalise)
+            Dim totalCuts As Integer
+            Dim beforeLen As Integer
+            Dim afterLen As Integer
+            beforeLen = before.times.Count
+            afterLen = after.times.Count
+            totalCuts = beforeLen + afterLen
+                    
+            ' did we get any answers?
+            If (before.OptimiseScore > 0) And (after.OptimiseScore > 0) Then
+                ' ok, normalise their scores
+                before.OptimiseScore = before.OptimiseScore * beforeLen / totalCuts
+                after.OptimiseScore = after.OptimiseScore * afterLen / totalCuts
                 
-        ' did we get any answers?
-        If (before.OptimiseScore > 0) And (after.OptimiseScore > 0) Then
-            ' ok, normalise their scores
-            before.OptimiseScore = before.OptimiseScore * beforeLen / totalCuts
-            after.OptimiseScore = after.OptimiseScore * afterLen / totalCuts
-            
-            ' and calculate the result
-            Dim result As Double
-            result = before.OptimiseScore + after.OptimiseScore
-            
-            ' store the calculations
-            Dim thisCalc As CalcDetail
-            Set thisCalc = New CalcDetail
-            thisCalc.setScores tNow, before.OptimiseScore, after.OptimiseScore, result
-            
-            ' is it better?
-            If (result < bestSoFar) Then
-                If (diag And Optimisation.dSLICE_SCORES) Then
-                    Debug.Print "Improved score: " & result & " whole leg is:" & thisLeg.OptimiseScore
+                ' and calculate the result
+                Dim result As Double
+                result = before.OptimiseScore + after.OptimiseScore
+                
+                ' store the calculations
+                Dim thisCalc As CalcDetail
+                Set thisCalc = New CalcDetail
+                thisCalc.setScores tNow, before.OptimiseScore, after.OptimiseScore, result
+                            
+                ' ok, store the results
+                thisLeg.calcs.add thisCalc, "" & tNow
+                            
+                ' is it better?
+                If (result < bestSoFar) Then
+                    If (diag And Optimisation.dSLICE_SCORES) Then
+                        Debug.Print "Improved score: " & result & " whole leg is:" & thisLeg.OptimiseScore
+                    End If
+    
+                    bestSoFar = result
+                    
+                    ' and remember the legs
+                    Set results = theLegs
                 End If
-
-                bestSoFar = result
-                
-                ' and remember the legs
-                Set results = theLegs
             End If
         End If
         
     Next ctr
     
     ' ok, compare the scores
-    If (bestSoFar - thisLeg.OptimiseScore > sliceDelta) Then
+    If (thisLeg.OptimiseScore - bestSoFar > sliceDelta) Then
         ' good enough. keep the results
     Else
         ' no, not good enough. forget them
-        Set results = New Legs
+        Set results = Nothing
         
-        Debug.Print ("Slices not better:" & (bestSoFar - sliceDelta))
+        Debug.Print ("Slices not better, best:" & Int(bestSoFar) & " overall:" & Int(thisLeg.OptimiseScore))
     End If
     
     Set sliceThisLeg = results

@@ -88,7 +88,7 @@ Public Sub showTargetLegs(data As Legs)
     Next thisL
 End Sub
 
-Public Sub showCalculations(data As Collection)
+Public Sub showCalculations(theLegs As Legs)
     ' get the target range
     
     ' loop through the rows

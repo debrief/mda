@@ -10,7 +10,7 @@ Sub DoCalc_Click()
     Set targetLegs = sensorLegs.determineTargetLegs
     
     ' also output the component calculations
-    Collate.showCalculations targetLegs.calcs
+    Collate.showCalculations targetLegs
     
     ' ok, now share the good news
     Collate.showTargetLegs targetLegs

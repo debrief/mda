@@ -14,20 +14,12 @@ Option Explicit
 
 Private pLegs As Collection
 
-' keep track of the calculations used to produce these legs
-Private pCalculations As Collection
-
 Private Sub Class_Initialize()
     Set pLegs = New Collection
-    Set pCalculations = New Collection
 End Sub
 
 Public Property Get Items() As Collection
     Set Items = pLegs
-End Property
-
-Public Property Get calcs() As Collection
-    Set calcs = pCalculations
 End Property
 
 Public Sub add(Leg As Leg)
@@ -59,9 +51,9 @@ Public Function determineTargetLegs() As Legs
     Set res = New Legs
     
     Dim zigBuffer As Double, optimiseThreshold As Double, sliceDelta As Double, diags As Integer
-    zigBuffer = 120
+    zigBuffer = 20
     optimiseThreshold = 0.01
-    sliceDelta = 0.2
+    sliceDelta = 70
     diags = 0
 
     ' loop through legs
@@ -75,18 +67,18 @@ Public Function determineTargetLegs() As Legs
                 Dim newLegs As Legs
                 
                 ' COMMENTING OUT THIS NEXT BIT, UNTIL WE HAVE BETTER DATA TO OPTIMISE
-                ' Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, optimiseThreshold, sliceDelta, diags)
-                If thisLeg.name = "Leg2" Then
-                    Set newLegs = New Legs
-                    newLegs.add Factory.createLeg("Leg2.1")
-                    newLegs.add Factory.createLeg("Leg2.2")
-                ElseIf thisLeg.name = "Leg2.2" Then
-                    Set newLegs = New Legs
-                    newLegs.add Factory.createLeg("Leg2.2.1")
-                    newLegs.add Factory.createLeg("Leg2.2.2")
-                Else
-                    Set newLegs = Nothing
-                End If
+                Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, optimiseThreshold, sliceDelta, diags)
+             '   If thisLeg.name = "Leg2" Then
+             '       Set newLegs = New Legs
+             '       newLegs.add Factory.createLeg("Leg2.1")
+             '       newLegs.add Factory.createLeg("Leg2.2")
+             '   ElseIf thisLeg.name = "Leg2.2" Then
+             '       Set newLegs = New Legs
+             '       newLegs.add Factory.createLeg("Leg2.2.1")
+             '       newLegs.add Factory.createLeg("Leg2.2.2")
+             '   Else
+             '       Set newLegs = Nothing
+             '   End If
                 
                 ' did we get some?
                 If newLegs Is Nothing Then

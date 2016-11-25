@@ -9,7 +9,7 @@ Public Sub AllTests()
     Tests.testIncomplete
     Collate.testGetOwnshipLegs
     Collate.testGetSensorLegs
-    Tests.testFullCycle
+  '  Tests.testFullCycle
     Debug.Print "==  tests complete   =="
 End Sub
 
