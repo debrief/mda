@@ -9,22 +9,57 @@ Public Sub testGetOwnshipLegs()
     Dim osData As Leg
     Set osData = loadOwnship()
     
-    If (osData.bearings.Count <> 27241) Then
+    If (osData.bearings.Count <> 20858) Then
         Debug.Print "len is wrong:" & osData.bearings.Count
     End If
     
-    Const turnThreshold = 5
+    Const turnThreshold = 100
+    Const steadyThreshold = 0.5
+    Const steadyWait = 120
     
     ' get ready to store results
-    Dim osLegs As Legs
+    Dim osLegs As Collection
     Set osLegs = sliceOwnship(osData, turnThreshold)
     
+    outputTurns osLegs
+    
+    Exit Sub
+    
+    Dim oLeg As OwnshipLeg
+    Debug.Print "0, 0"
+    For Each oLeg In osLegs
+        Debug.Print oLeg.StartTime & ", 0"
+        Debug.Print oLeg.StartTime & ", 20"
+        Debug.Print oLeg.EndTime & ", 20"
+        Debug.Print oLeg.EndTime & ", 0"
+    Next oLeg
     
 End Sub
 
-Private Function sliceOwnship(osData As Leg, turnThreshold As Double) As Legs
-    Dim res As Legs
-    Set res = New Legs
+Private Sub outputTurns(oLegs As Collection)
+    
+    Dim rng As Range
+    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("R3:W20860")
+    Dim thisLeg As OwnshipLeg
+    Dim ctr
+    ctr = 1
+    For Each thisLeg In oLegs
+        rng.Cells(ctr, 1).value = thisLeg.StartTime
+        rng.Cells(ctr, 2).value = 0
+        rng.Cells(ctr + 1, 1).value = thisLeg.StartTime
+        rng.Cells(ctr + 1, 2).value = 20
+        rng.Cells(ctr + 2, 1).value = thisLeg.EndTime
+        rng.Cells(ctr + 2, 2).value = 20
+        rng.Cells(ctr + 3, 1).value = thisLeg.EndTime
+        rng.Cells(ctr + 3, 2).value = 0
+        
+        ctr = ctr + 4
+    Next thisLeg
+End Sub
+
+Private Function sliceOwnship(osData As Leg, turnThreshold As Double) As Collection
+    Dim res As Collection
+    Set res = New Collection
 
     Dim lastSign As Integer
     Dim lastInversion As Long
@@ -39,7 +74,7 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double) As Legs
 
     Dim ctr As Long
 '    For ctr = 1 To osData.times.Count
-    For ctr = 1 To 10000
+    For ctr = 1 To 20000
         Dim thisT As Long
         thisT = osData.times.Item(ctr)
         Dim course As Double
@@ -66,11 +101,18 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double) As Legs
             If (thisSign <> lastSign) Then
                 ' are we in a large turn?
                 If inTurn Then
-                    Debug.Print "       ended at:" & thisT
+                  '  Debug.Print "       ended at:" & thisT & " was:" & Int(runningTotal)
                     inTurn = False
+                    
+                    ' and store it
+                    Dim newLeg As OwnshipLeg
+                    Set newLeg = New OwnshipLeg
+                    newLeg.StartTime = lastInversion
+                    newLeg.EndTime = thisT
+                    res.add newLeg
                 End If
                 
-'                Debug.Print "Inversion at:" & lastInversion & " was:" & lastSign & " total:" & runningTotal
+              '  Debug.Print "Inversion at:" & lastInversion & " was:" & lastSign & " total:" & runningTotal
                                     
                 ' remember it happened
                 lastInversion = thisT
@@ -84,7 +126,7 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double) As Legs
                 
                 ' hey, is this a big turn?
                 If (runningTotal > turnThreshold) And Not inTurn Then
-                    Debug.Print "Turn started at:" & lastInversion
+               '     Debug.Print "Turn started at:" & lastInversion & " total now:" & runningTotal
                     inTurn = True
                 End If
 
@@ -107,13 +149,14 @@ Private Function loadOwnship() As Leg
     Set res = Factory.createLeg("OS")
     
     Dim rng As Range
-    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("A3:I27243")
+'     Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("A3:I27243")
+    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("R3:U20860")
     Dim thisR As Range
     For Each thisR In rng.Rows
         Dim elapsed As Long
-        elapsed = thisR.Cells(1, 2).value
+        elapsed = thisR.Cells(1, 1).value
         Dim course As Double
-        course = thisR.Cells(1, 7).value
+        course = thisR.Cells(1, 4).value
         
         res.times.add elapsed
         res.bearings.add course
