@@ -38,8 +38,12 @@ End Sub
 
 Private Sub outputTurns(oLegs As Collection)
     
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+    
     Dim rng As Range
-    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("R3:W20860")
+    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("W3:X20860")
+    rng.Clear
     Dim thisLeg As OwnshipLeg
     Dim ctr
     ctr = 1
@@ -55,6 +59,10 @@ Private Sub outputTurns(oLegs As Collection)
         
         ctr = ctr + 4
     Next thisLeg
+    
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+
 End Sub
 
 Private Function sliceOwnship(osData As Leg, turnThreshold As Double) As Collection
@@ -73,8 +81,8 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double) As Collect
     inTurn = False
 
     Dim ctr As Long
-'    For ctr = 1 To osData.times.Count
-    For ctr = 1 To 20000
+    For ctr = 1 To osData.times.Count
+ '   For ctr = 1 To 5000
         Dim thisT As Long
         thisT = osData.times.Item(ctr)
         Dim course As Double
