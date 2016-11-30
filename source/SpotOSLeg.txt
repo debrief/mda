@@ -7,15 +7,18 @@ Public Sub testGetOwnshipLegs()
     ' get the data
     Dim osData As Leg
 '    Set osData = loadOwnship("A3:I27243", 2, 7)
-    Set osData = loadOwnship("R3:U20860", 1, 4)
+  '  Set osData = loadOwnship("R3:U20860", 1, 4)
+    Set osData = loadOwnship("Z3:AC6858", 1, 3)
+        
+    ' data 3
+'    Const turnThreshold = 80
+'    Const steadyThreshold = 70
+'    Const steadyWait = 320
     
-    If (osData.bearings.Count <> 20858) Then
-        Debug.Print "len is wrong:" & osData.bearings.Count
-    End If
-    
-    Const turnThreshold = 80
-    Const steadyThreshold = 70
-    Const steadyWait = 320
+    ' data 2
+    Const turnThreshold = 20
+    Const steadyThreshold = 20
+    Const steadyWait = 190
     
     ' get ready to store results
     Dim osLegs As Collection
@@ -53,15 +56,17 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
     Dim checkEndUntil As Long
     
     ' keep track of when the leg probably finished
-    Dim probableEnd As Long
+    Dim probableTurnEnd As Long
+    Dim turnStart As Long
     Dim legStart As Long
+    Dim inTurnInversion As Long
         
     Dim inTurn As Boolean
     inTurn = False
 
     Dim ctr As Long
     For ctr = 1 To osData.times.Count
-'    For ctr = 1 To 12000
+ '   For ctr = 1 To 2200
         Dim thisT As Long
         thisT = osData.times.Item(ctr)
         Dim course As Double
@@ -75,6 +80,13 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
             
             deltaTime = thisT - lastTime
             deltaCourse = course - lastCourse
+            
+            ' special handling - for passing through 360
+            If (deltaCourse > 100) Then
+                deltaCourse = deltaCourse - 360
+            ElseIf (deltaCourse < -100) Then
+                deltaCourse = deltaCourse + 360
+            End If
         
             ' calculate the diff
             Dim thisBRate As Double
@@ -86,10 +98,19 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
             
             ' has it changed?
             If (thisSign <> lastSign) Then
-                ' are we in a large turn?
+            
+                ' ok, the sign has changed. This means we've changed from one turn/oscillation
+                ' to then next
+            
+                ' are we already a recognised turn?
                 If inTurn Then
-                    ' are we waiting for a steady state?
+                
+                    ' have we calculated the turn time?
                     If (checkEndUntil > 0) Then
+                    
+                        ' we've got some wiggle in the checking period turn, remember it
+                        inTurnInversion = thisT
+                    
                         If (thisT < checkEndUntil) Then
                             ' ok, we still have to carry on checking.
                             
@@ -98,10 +119,13 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
                                 ' ok, we need a new steady time
                                 checkEndUntil = thisT + steadyWait
                                 
-                                probableEnd = thisT
+                                ' this new wiggle may have been the actual end of the turn
+                                probableTurnEnd = thisT
+                                                            
+                            '    Debug.Print " extending turn after turn of:" & Int(runningTotal) & " end:" & probableTurnEnd
                             Else
                                 ' ok, we just carry on waiting
-                     '           Debug.Print "ignoring zig with total:" & runningTotal
+                            '    Debug.Print "ignoring zig with total:" & runningTotal & " remaining secs:" & (checkEndUntil - thisT)
                             End If
                         Else
                             ' ok, time up. we can use the finish time
@@ -112,16 +136,14 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
                         ' ok, we've finished our large turn. track when we continue tracking until
                         checkEndUntil = thisT + steadyWait
                         
-                        probableEnd = thisT
-                        
-                        ' track this end as the probable end, in case we get another one
-                        lastInversion = thisT
+                        ' this may have been the end of the turn
+                        probableTurnEnd = thisT
                     End If
                     
-                Else
+                    
                 End If
                 
-              '  Debug.Print "Inversion at:" & lastInversion & " was:" & lastSign & " total:" & runningTotal
+               ' Debug.Print "Inversion at:" & lastInversion & " was:" & lastSign & " total:" & runningTotal
                                     
                 ' track this oscillation
                 lastInversion = thisT
@@ -135,33 +157,49 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
                 ' build up the running total
                 runningTotal = runningTotal + Abs(deltaTime * deltaCourse)
                 
+                ' are we still tracking the end of a turn?
                 If inTurn Then
                     ' ok, has the time elapsed?
                     If checkEndUntil > 0 Then
-                        If thisT >= checkEndUntil Then
-                            ' ok, elapsed. store the data
-                            Debug.Print "started at:" & legStart & " ended at:" & probableEnd & " area under curve:" & Int(runningTotal)
+                        If thisT >= checkEndUntil And (inTurnInversion <> 0) Then
+                            ' ok, turn complete
                             inTurn = False
                             
+                            ' clear
                             checkEndUntil = 0
                             
-                            ' and store it
-                            Dim newLeg As OwnshipLeg
-                            Set newLeg = New OwnshipLeg
-                            newLeg.StartTime = legStart
-                            newLeg.EndTime = probableEnd
-                            res.add newLeg
+             '               Debug.Print "turn complete at:" & thisT
+                            
+                            ' ok, the last inversion was the leg start
+                            legStart = probableTurnEnd
                         End If
                     End If
                 End If
                 
                 ' hey, is this a big turn?
                 If (runningTotal > turnThreshold) And Not inTurn Then
-               '     Debug.Print "Turn started at:" & lastInversion & " total now:" & runningTotal
+                    
+                    ' ok, track the time the turn started
+                    turnStart = lastInversion
+                    
+                    Debug.Print "Leg complete. started at:" & legStart & " ended at:" & lastInversion & " area under curve:" & Int(runningTotal)
+                    
+                    ' ok, the last leg is complete - we're in a turn
+                    Dim newLeg As OwnshipLeg
+                    Set newLeg = New OwnshipLeg
+                    newLeg.StartTime = legStart
+                    newLeg.EndTime = lastInversion
+                    res.add newLeg
+                    
+                    If lastInversion = 5732 Then
+                        Debug.Print "herE2"
+                    End If
+                    
+                    Debug.Print "Turn started at:" & lastInversion & " total now:" & runningTotal
                     inTurn = True
                     
-                    ' ok, the leg started at the time of the last inversion
-                    legStart = lastInversion
+                    inTurnInversion = 0
+
                 End If
 
             End If
