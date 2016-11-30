@@ -1,13 +1,13 @@
 Attribute VB_Name = "SpotOSLeg"
 Option Explicit
 
-
 Public Sub testGetOwnshipLegs()
     Debug.Print "testGetOwnshipLegs"
 
     ' get the data
     Dim osData As Leg
-    Set osData = loadOwnship()
+'    Set osData = loadOwnship("A3:I27243", 2, 7)
+    Set osData = loadOwnship("R3:U20860", 1, 4)
     
     If (osData.bearings.Count <> 20858) Then
         Debug.Print "len is wrong:" & osData.bearings.Count
@@ -140,7 +140,7 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
                     If checkEndUntil > 0 Then
                         If thisT >= checkEndUntil Then
                             ' ok, elapsed. store the data
-                            Debug.Print "started at:" & legStart & " ended at:" & probableEnd & " was:" & Int(runningTotal)
+                            Debug.Print "started at:" & legStart & " ended at:" & probableEnd & " area under curve:" & Int(runningTotal)
                             inTurn = False
                             
                             checkEndUntil = 0
@@ -178,19 +178,18 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
 End Function
 
 
-Private Function loadOwnship() As Leg
+Private Function loadOwnship(rangeStr As String, elapsedCol As Integer, courseCol As Integer) As Leg
     Dim res As Leg
     Set res = Factory.createLeg("OS")
     
     Dim rng As Range
-'     Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("A3:I27243")
-    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("R3:U20860")
+    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range(rangeStr)
     Dim thisR As Range
     For Each thisR In rng.Rows
         Dim elapsed As Long
-        elapsed = thisR.Cells(1, 1).value
+        elapsed = thisR.Cells(1, elapsedCol).value
         Dim course As Double
-        course = thisR.Cells(1, 4).value
+        course = thisR.Cells(1, courseCol).value
         
         res.times.add elapsed
         res.bearings.add course
