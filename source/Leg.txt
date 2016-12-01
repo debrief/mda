@@ -19,7 +19,7 @@ Private pBearings As Collection
 Private pProcessed As Boolean
 
 ' the name for this leg
-Private pName As String
+Private PName As String
 
 ' the overall score for this leg
 Private pOptimiseScore As Double
@@ -75,9 +75,9 @@ Public Property Let Processed(value As Boolean)
     pProcessed = value
 End Property
 
-Public Property Get name() As String
-    name = pName
+Public Property Get Name() As String
+    Name = PName
 End Property
-Public Property Let name(value As String)
-    pName = value
+Public Property Let Name(value As String)
+    PName = value
 End Property

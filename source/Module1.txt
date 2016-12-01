@@ -1,0 +1,110 @@
+Attribute VB_Name = "Module1"
+Sub Copy_data()
+'
+' Copy_data Macro
+'
+Dim newsheet As String
+Dim seriesname As String
+Dim i As Integer
+Dim j As Integer
+Dim P As Integer
+
+Dim k As Integer
+Dim r As Range
+Dim s As Range
+Dim ChartObj As ChartObject
+
+
+ 'take name of sheet to be copied from
+ newsheet = Worksheets("Chart").Cells(1, 2)
+ j = Worksheets("Chart").Cells(3, 2)
+ k = j + 3
+ i = 3
+ 
+ 
+'copy data
+    Sheets(newsheet).Select
+    Columns("A:A").Select
+    Selection.Copy
+    Sheets("Chart").Select
+    Columns(k + j + 1).Select
+    ActiveSheet.Paste
+         
+    'Add series number
+    Columns(k + j + 2).Select
+    ActiveCell.value = j + 1
+    ActiveCell.Select
+    Selection.Copy
+    
+    For i = 1 To 20000
+ If Not IsEmpty(Cells(i, k + j + 1).value) Then
+ 
+    Cells(i, k + j + 2).value = j + 1
+    End If
+    Next
+    
+    
+    'Columns(k + j + 2).Select
+    'ActiveSheet.Paste
+    
+    'add title
+    ActiveSheet.Cells(1, k + j + 1).value = newsheet
+    
+    
+k = j + 3
+P = 3
+
+
+
+' Assign series name
+
+seriesname = ActiveSheet.Cells(1, k + j + 1).value
+
+
+'Assign x values
+
+Set r = Cells(i, k + j + 1)
+ For P = 3 To 20000
+ If Not IsEmpty(Cells(P, k + j + 1).value) Then
+ Set r = Union(r, Cells(P, k + j + 1))
+ End If
+ Next
+ r.Select
+ 
+ 'Assign y values
+ 
+ k = j + 3
+ P = 3
+ 
+ Set s = Cells(P + 1, k + j + 2)
+ For P = 3 To 20000
+ If Not IsEmpty(Cells(P, k + j + 1).value) Then
+ Set s = Union(s, Cells(P, k + j + 2))
+ End If
+ Next
+ s.Select
+
+'Add series to chart
+
+
+Set ChartObj = ActiveSheet.ChartObjects("Chart 1")
+
+With ChartObj.Chart.SeriesCollection.NewSeries
+            .xValues = r
+            .Values = s
+            .Name = seriesname
+        End With
+
+
+ 
+
+
+    'Update sheet count
+ 
+    ActiveSheet.Cells(3, 2).value = j + 1
+    Cells(1, 2).Select
+
+    
+   End Sub
+   
+  

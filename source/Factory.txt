@@ -2,10 +2,26 @@ Attribute VB_Name = "Factory"
 Option Explicit
 
 ' create (and initialise) a new leg
-Public Function createLeg(name As String) As Leg
+Public Function createLeg(Name As String) As Leg
     Dim res As New Leg
-    res.name = name
+    res.Name = Name
     Set createLeg = res
 End Function
 
+' create (and initialise) a new leg
+Public Function createOwnshipLeg(Name As String) As OwnshipLeg
+    Dim res As New OwnshipLeg
+    res.Name = Name
+    Set createOwnshipLeg = res
+End Function
 
+
+' create (and initialise) a new time period
+Public Function createTimePeriod(tName As String, tStart As Double, tEnd As Double) As TimePeriod
+    Dim res As TimePeriod
+    Set res = New TimePeriod
+    res.Name = tName
+    res.StartTime = tStart
+    res.EndTime = tEnd
+    Set createTimePeriod = res
+End Function

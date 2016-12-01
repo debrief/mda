@@ -1,0 +1,48 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "TimePeriod"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
+' this is the time period representing a leg of data
+' == It's made into a class so that we collect the data
+' == for a leg into one place
+
+' start time
+Private pStart As Double
+
+' end time
+Private pEnd As Double
+
+' name
+Private PName As String
+
+Public Property Let Name(data As String)
+    PName = Name
+End Property
+
+Public Property Get Name() As String
+    Name = PName
+End Property
+
+Public Property Let StartTime(data As Double)
+    pStart = data
+End Property
+
+Public Property Get StartTime() As Double
+    StartTime = pStart
+End Property
+
+Public Property Let EndTime(data As Double)
+    pEnd = data
+End Property
+
+Public Property Get EndTime() As Double
+    EndTime = pEnd
+End Property
+
+

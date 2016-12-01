@@ -27,7 +27,7 @@ Public Sub testGetOwnshipLegs()
     outputTurns osLegs
     Exit Sub
     
-    Dim oLeg As OwnshipLeg
+    Dim oLeg As TimePeriod
     Debug.Print "0, 0"
     For Each oLeg In osLegs
         Debug.Print oLeg.StartTime & ", 0"
@@ -185,8 +185,8 @@ Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
                     Debug.Print "Leg complete. started at:" & legStart & " ended at:" & lastInversion & " area under curve:" & Int(runningTotal)
                     
                     ' ok, the last leg is complete - we're in a turn
-                    Dim newLeg As OwnshipLeg
-                    Set newLeg = New OwnshipLeg
+                    Dim newLeg As TimePeriod
+                    Set newLeg = New TimePeriod
                     newLeg.StartTime = legStart
                     newLeg.EndTime = lastInversion
                     res.add newLeg
@@ -246,7 +246,7 @@ Private Sub outputTurns(oLegs As Collection)
     Dim rng As Range
     Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("W3:X20860")
     rng.Clear
-    Dim thisLeg As OwnshipLeg
+    Dim thisLeg As TimePeriod
     Dim ctr
     ctr = 1
     For Each thisLeg In oLegs

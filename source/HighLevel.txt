@@ -1,4 +1,164 @@
 Attribute VB_Name = "HighLevel"
+Option Explicit
+
+Dim oTrack As OwnshipLeg
+Dim tTrack As OwnshipLeg
+Dim bearingData As Leg
+Dim oLegs As Collection
+
+
+Const startDate = #1/1/1900 10:00:00 PM#
+
+Sub LoadData()
+    Dim aSheet As Worksheet
+    Set aSheet = ActiveWorkbook.Worksheets("Analysis")
+    
+    ' clear the output cells
+    aSheet.Range("ownship_data").Clear
+    aSheet.Range("target_data").Clear
+    aSheet.Range("sensor_data").Clear
+
+    ' retrieve the sample rate
+    Dim sampleRate As Double
+    sampleRate = aSheet.Range("sample_rate").value
+
+    Dim oSheet As Worksheet
+    Set oSheet = ActiveWorkbook.Worksheets("Tracks")
+    
+    ' get the ownship data
+    Dim oTrackIn As Range
+    Set oTrackIn = oSheet.Range("ownshipTrack")
+    
+    Set oTrack = Factory.createOwnshipLeg("Ownship")
+    
+    Dim lastT As Double
+    lastT = -1
+    
+    Dim thisR As Range
+    For Each thisR In oTrackIn.Rows
+        Dim thisT As Long
+        Dim thisVal As Date
+        thisVal = thisR.Cells(1, 1)
+        thisT = Date2Long(thisVal + 1)
+        
+        ' see if we need to skip it
+        If (lastT = -1) Or (thisT - lastT >= sampleRate) Then
+            Dim thisC As Double
+            thisC = thisR.Cells(1, 6)
+            
+            oTrack.times.add thisT
+            oTrack.courses.add thisC
+            
+            ' remember the sample time
+            lastT = thisT
+        End If
+    Next thisR
+    
+    ' and the target track
+    Dim tTrackIn As Range
+    Set oTrackIn = oSheet.Range("TargetTrack")
+    
+    Set tTrack = Factory.createOwnshipLeg("Target")
+    
+    lastT = -1
+    For Each thisR In oTrackIn.Rows
+        thisT = Date2Long(thisR.Cells(1, 1))
+       
+        ' see if we need to skip it
+        If (lastT = -1) Or (thisT - lastT >= sampleRate) Then
+            thisC = thisR.Cells(1, 14)
+            
+            tTrack.times.add thisT
+            tTrack.courses.add thisC
+            lastT = thisT
+        End If
+    Next thisR
+        
+    ' now get the sensor data
+    Dim sSheet As Worksheet
+    Set sSheet = ActiveWorkbook.Worksheets(aSheet.Range("SensorName").value)
+    
+    Set bearingData = Factory.createLeg("All data")
+    
+    Dim sensorDataIn As Range
+    Set sensorDataIn = sSheet.Range("A3:K50000")
+    
+    lastT = -1
+    For Each thisR In sensorDataIn.Rows
+        ' is it empty?
+        If IsEmpty(thisR.Cells(1, 1)) Then
+            ' ok, we're done
+            Exit For
+        Else
+            thisT = Date2Long(thisR.Cells(1, 1))
+            
+            ' see if we need to skip it
+            If (lastT = -1) Or (thisT - lastT >= sampleRate) Then
+                Dim thisB As Double
+                thisB = thisR.Cells(1, 3)
+                
+                bearingData.times.add thisT
+                bearingData.bearings.add thisB
+                
+                lastT = thisT
+            End If
+        End If
+    Next thisR
+
+    ' share the results
+    aSheet.Range("ownship_data").value = oTrack.times.Count
+    aSheet.Range("sensor_data").value = bearingData.times.Count
+    aSheet.Range("target_data").value = tTrack.times.Count
+End Sub
+
+Sub CalcOwnshipLegs()
+    Dim aSheet As Worksheet
+    Set aSheet = ActiveWorkbook.Worksheets("Analysis")
+    
+    ' clear the output
+    aSheet.Range("ownship_legs").Clear
+
+
+    Dim oSheet As Worksheet
+    Set oSheet = ActiveWorkbook.Worksheets("Ownship Legs")
+    
+    ' get the ownship data
+    Dim oTrackIn As Range
+    Set oTrackIn = oSheet.Range("ownshipLegRef")
+    
+    Set oLegs = New Collection
+    
+    Dim thisR As Range
+    For Each thisR In oTrackIn.Rows
+        Dim tName As String
+        Dim tStart As Double
+        Dim tEnd As Double
+    
+        tName = thisR.Cells(1, 1)
+        tStart = thisR.Cells(1, 2)
+        tEnd = thisR.Cells(1, 3)
+    
+        Dim thisT As TimePeriod
+        Set thisT = Factory.createTimePeriod(tName, tStart, tEnd)
+        
+        oLegs.add thisT
+        
+    Next thisR
+    
+    ' output the results
+    aSheet.Range("ownship_legs").value = oLegs.Count
+
+End Sub
+
+Sub CalcTargetLegs()
+    ' ok, slice the bearing data according to ownship legs
+    
+    ' now work through the bearing legs
+    
+        ' ok, slice this leg
+        
+    ' output the results
+End Sub
 
 Sub DoCalc_Click()
     ' populate list of sensor data
@@ -15,3 +175,8 @@ Sub DoCalc_Click()
     ' ok, now share the good news
     Collate.showTargetLegs targetLegs
 End Sub
+
+Public Function Date2Long(dtmDate As Date) As Long
+    
+    Date2Long = (dtmDate - #1/1/1900 10:00:00 PM#) * 86400
+End Function

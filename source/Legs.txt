@@ -23,7 +23,7 @@ Public Property Get Items() As Collection
 End Property
 
 Public Sub add(Leg As Leg)
-    pLegs.add Leg, Leg.name
+    pLegs.add Leg, Leg.Name
 End Sub
 
 Public Property Get complete() As Boolean
@@ -41,9 +41,9 @@ End Property
 Public Sub replace(original As Leg, before As Leg, after As Leg)
    
     ' ok, swap the original for the new ones
-    pLegs.add before, before.name, original.name
-    pLegs.add after, after.name, original.name
-    pLegs.Remove original.name
+    pLegs.add before, before.Name, original.Name
+    pLegs.add after, after.Name, original.Name
+    pLegs.Remove original.Name
 End Sub
 
 Public Function determineTargetLegs() As Legs

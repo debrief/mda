@@ -4,9 +4,9 @@ Option Explicit
 Function SliceIntoLegs(thisLeg As Leg, tNow As Double, zigBuffer As Double) As Legs
         
     Dim beforeLeg As Leg
-    Set beforeLeg = Factory.createLeg(thisLeg.name + ".1")
+    Set beforeLeg = Factory.createLeg(thisLeg.Name + ".1")
     Dim afterLeg As Leg
-    Set afterLeg = Factory.createLeg(thisLeg.name + ".2")
+    Set afterLeg = Factory.createLeg(thisLeg.Name + ".2")
     
     Dim times As Collection
     Set times = thisLeg.times
@@ -206,14 +206,14 @@ Public Sub testReplaceLegs()
             If Not thisLeg.Processed Then
                 ' ok, we need to process it
                 
-                If thisLeg.name = "L2" Then
+                If thisLeg.Name = "L2" Then
                     ' ok, do the replace
                     tLegs.replace thisLeg, beforeLeg, afterLeg
                     
                     ' ok, we need to drop out of this loop
                     Exit For
                 Else
-                    testStr = testStr & thisLeg.name & ","
+                    testStr = testStr & thisLeg.Name & ","
                     thisLeg.Processed = True
                 End If
             End If

@@ -8,30 +8,43 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-' this is the time period representing a leg of data
+' this is a leg, consisting of times and bearings
 ' == It's made into a class so that we collect the data
 ' == for a leg into one place
 
-' start time
-Private pStart As Double
+Private pTimes As Collection
+Private pCourses As Collection
+Private PName As String
 
-' end time
-Private pEnd As Double
+Private Sub Class_Initialize()
+    Set pTimes = New Collection
+    Set pCourses = New Collection
+End Sub
 
-Public Property Let StartTime(data As Double)
-    pStart = data
+Public Property Let Name(data As String)
+    PName = Name
 End Property
 
-Public Property Get StartTime() As Double
-    StartTime = pStart
+Public Property Get Name() As String
+    Name = PName
 End Property
 
-Public Property Let EndTime(data As Double)
-    pEnd = data
+Public Property Get hasData() As Boolean
+    hasData = pTimes.Count >= 2
 End Property
 
-Public Property Get EndTime() As Double
-    EndTime = pEnd
+Public Property Get times() As Collection
+    Set times = pTimes
 End Property
 
+Public Property Set times(data As Collection)
+    Set pTimes = data
+End Property
 
+Public Property Get courses() As Collection
+    Set courses = pCourses
+End Property
+
+Public Property Set courses(data As Collection)
+    Set pCourses = data
+End Property

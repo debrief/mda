@@ -118,7 +118,7 @@ Public Function getOwnshipLegs() As Collection
     
     Dim thisRow As Range
     Dim ctr As Integer
-    Dim thisLeg As OwnshipLeg
+    Dim thisLeg As TimePeriod
     ctr = 0
     For Each thisRow In data.Rows
         If ctr = 0 Then
@@ -135,7 +135,7 @@ Public Function getOwnshipLegs() As Collection
                 ' is this a new leg?
                 If Not (legName = "#N/A") Then
                     ' ok, new leg
-                    Set thisLeg = New OwnshipLeg
+                    Set thisLeg = New TimePeriod
                     thisLeg.StartTime = secs
                 Else
                     thisLeg.EndTime = secs

@@ -22,7 +22,7 @@ Sub SaveCodeModules()
         For i% = 1 To .VBComponents.Count
             If .VBComponents(i%).CodeModule.CountOfLines > 0 Then
                 Dim outPath
-                sName$ = .VBComponents(i%).CodeModule.name
+                sName$ = .VBComponents(i%).CodeModule.Name
                 outPath = Application.ActiveWorkbook.Path & "\source\" & sName$ & ".txt"
                 .VBComponents(i%).Export outPath
             End If
@@ -76,10 +76,10 @@ Public Sub testOptimisation()
 End Sub
 
 ' produce a single composite time/bearing dataset
-Private Function collateThisLeg(name As String) As Leg
+Private Function collateThisLeg(Name As String) As Leg
 
     Dim res As Leg
-    Set res = Factory.createLeg(name)
+    Set res = Factory.createLeg(Name)
     
     res.times.add 0
     res.times.add 10
