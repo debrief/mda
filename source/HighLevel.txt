@@ -90,7 +90,9 @@ Sub LoadData()
             ' ok, we're done
             Exit For
         Else
-            thisT = Date2Long(thisR.Cells(1, 1))
+            Dim testVal
+            testVal = thisR.Cells(1, 1)
+            thisT = Date2Long(thisR.Cells(1, 1) + 1)
             
             ' see if we need to skip it
             If (lastT = -1) Or (thisT - lastT >= sampleRate) Then
@@ -117,7 +119,6 @@ Sub CalcOwnshipLegs()
     
     ' clear the output
     aSheet.Range("ownship_legs").Clear
-
 
     Dim oSheet As Worksheet
     Set oSheet = ActiveWorkbook.Worksheets("Ownship Legs")
@@ -151,7 +152,21 @@ Sub CalcOwnshipLegs()
 End Sub
 
 Sub CalcTargetLegs()
+
+    Dim aSheet As Worksheet
+    Set aSheet = ActiveWorkbook.Worksheets("Analysis")
+    
+    ' clear the output
+    aSheet.Range("bearing_legs").Clear
+    aSheet.Range("target_legs").Clear
+
+
     ' ok, slice the bearing data according to ownship legs
+    Dim bLegs As Legs
+    Set bLegs = bearingData.sliceWith(oLegs)
+    
+    ' output the results
+    aSheet.Range("bearing_legs").value = bLegs.Items.Count
     
     ' now work through the bearing legs
     

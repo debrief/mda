@@ -81,3 +81,66 @@ End Property
 Public Property Let Name(value As String)
     PName = value
 End Property
+
+Public Function sliceWith(periods As Collection) As Legs
+    Dim ctr As Integer
+    ctr = 0
+    
+    Dim res As Legs
+    Set res = New Legs
+
+    ' ok, loop the periods
+    Dim thisP As TimePeriod
+    For Each thisP In periods
+        ctr = ctr + 1
+        
+        If ctr > times.Count Then
+            Exit For
+        End If
+        
+        ' ok, work through our data items, checking them against the time periods
+        Dim thisT As Long
+        thisT = times.Item(ctr)
+        
+        While thisT < thisP.StartTime
+            ctr = ctr + 1
+            
+            If ctr > times.Count Then
+                Exit For
+            End If
+
+            thisT = times.Item(ctr)
+        Wend
+        
+        ' ok, create a new leg
+        Dim newLeg As Leg
+        Set newLeg = Factory.createLeg("L" & res.Items.Count + 1)
+        
+        While thisT < thisP.EndTime
+            Dim thisB As Double
+            thisB = bearings.Item(ctr)
+            
+            ' ok, add this items
+            newLeg.times.add thisT
+            newLeg.bearings.add thisB
+            
+            ' and move to the next one
+            ctr = ctr + 1
+            
+            If ctr > times.Count Then
+                Exit For
+            End If
+            
+            thisT = times.Item(ctr)
+        Wend
+        
+        ' ok, we're past the end of this time period, we can mov along
+        If newLeg.times.Count > 0 Then
+        
+            res.add newLeg
+        End If
+        
+    Next thisP
+    
+    Set sliceWith = res
+End Function
