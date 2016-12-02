@@ -4,8 +4,49 @@ Option Explicit
 Const OWNSHIP_LEGS_RANGE = "dOwnshipLegs"
 Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
 
+
+Public Sub outputOwnshipLegs(data As Collection, origin As String)
+    Dim outArray As Variant
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(10000, 2).Clear
+    
+    Dim numPTs As Integer
+    numPTs = data.Count
+    
+    Dim onValue As Integer
+    Dim offValue As Integer
+    onValue = ActiveWorkbook.Worksheets("Analysis").Range("onValue").value
+    offValue = ActiveWorkbook.Worksheets("Analysis").Range("offValue").value
+    
+    ReDim outArray(numPTs * 4, 1)
+    Dim i As Integer
+    Dim rowCtr As Integer
+    rowCtr = 0
+    Dim oLeg As TimePeriod
+    Dim lastTime
+    lastTime = 0
+    For i = 1 To numPTs
+        Set oLeg = data.Item(i)
+        outArray(rowCtr, 0) = oLeg.StartTime
+        outArray(rowCtr, 1) = onValue
+        outArray(rowCtr + 1, 0) = oLeg.StartTime
+        outArray(rowCtr + 1, 1) = offValue
+        outArray(rowCtr + 2, 0) = oLeg.EndTime
+        outArray(rowCtr + 2, 1) = offValue
+        outArray(rowCtr + 3, 0) = oLeg.EndTime
+        outArray(rowCtr + 3, 1) = onValue
+        
+        rowCtr = rowCtr + 4
+    Next i
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(numPTs * 4, 2).value = outArray
+
+End Sub
+
 Public Sub outputTrack(track As OwnshipLeg, origin As String)
     Dim outArray As Variant
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(10000, 2).Clear
     
     Dim numPTs As Integer
     numPTs = track.times.Count
@@ -23,6 +64,8 @@ End Sub
 Public Sub outputBearings(track As Leg, origin As String)
     Dim outArray As Variant
     
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(10000, 2).Clear
+    
     Dim numPTs As Integer
     numPTs = track.times.Count
     
@@ -35,7 +78,6 @@ Public Sub outputBearings(track As Leg, origin As String)
     
     ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(numPTs, 2).value = outArray
 End Sub
-
 
 Public Function getTrackFromRange(Range As String, trackName As String, _
              colIndex As Integer, sampleRate As Double) As OwnshipLeg
