@@ -6,7 +6,8 @@ Const MAX_DOUBLE As Double = 1.79769313486231E+308
 
 ' whether to output slicing scores
 Public Const dSLICE_SCORES = 1
-Public Const dOPTIMISE_SCORES = 2
+Public Const dITERATION_SCORES = 2
+Public Const dOPTIMISE_SCORES = 4
 
 ' we use thia global to store the data we're using for the
 ' in-worksheet optimiser
@@ -141,7 +142,7 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
         ' put the datasets into global space (so the forecast function can see them)
         Set globalLeg = thisLeg
         
-        Debug.Print "Optimising leg starting at:" & thisLeg.times(1)
+'        Debug.Print "Optimising leg starting at:" & thisLeg.times(1)
     
         ' ok, setup the optimiser
         SolverReset
@@ -162,17 +163,17 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
         solveradd Range("optB"), 1, firstBearing + 2
         
         ' give the P and Q a range
-        solveradd Range("optP"), 3, -5
-        solveradd Range("optP"), 3, 5
+        solveradd Range("optP"), 3, -15
+        solveradd Range("optP"), 1, 15
         
         ' give the P and Q a range
-        solveradd Range("optQ"), 3, -5
-        solveradd Range("optQ"), 3, 5
+        solveradd Range("optQ"), 3, -15
+        solveradd Range("optQ"), 1, 15
         
         ' and set the initial bearing value
         Range("optB").value = firstBearing
         
-        Debug.Print "Setting initial bearing to:" & firstBearing
+    '    Debug.Print "Setting initial bearing to:" & firstBearing
         
         ' run the solver
         SolverSolve UserFinish:=True
@@ -186,12 +187,18 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
             Debug.Print "** Optimise result isn't string!"
         End If
         
-        Debug.Print "Optimise score was:" & Int(result)
+     '   Debug.Print "Optimise score was:" & Int(result)
         
         End With
         
         ' and switch updatse back on
       '  Application.ScreenUpdating = True
+      
+        If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
+            Debug.Print "B:" & Range("OptB") & ", P:" & Range("OptP") & ", Q:" & _
+                  Range("OptQ") & ", score:" & Range("OptScore") & " Items:" & thisLeg.times.Count
+        End If
+
         
     End If
     
@@ -207,8 +214,6 @@ Public Function calculateScore2(B As Double, P As Double, Q As Double) As Double
         
     Dim times As Collection
     Dim bearings As Collection
-    
-    Debug.Print "Trying P of:" & P
     
     If (True) Then
     
@@ -262,7 +267,7 @@ Public Function calculateScore2(B As Double, P As Double, Q As Double) As Double
         
     End If
     
-    If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
+    If (globalDiag And Optimisation.dITERATION_SCORES) Then
         Debug.Print "B:" & B & ", P:" & P & ", Q:" & Q & ", score:" & runningTotal & " Items:" & times.Count
     End If
     
@@ -318,7 +323,7 @@ Public Sub testOptimise()
     Set globalLeg = testLeg
     
     ' we want to see the optimise steps
-    globalDiag = dOPTIMISE_SCORES
+    globalDiag = dITERATION_SCORES
     
     Dim score As Double
     score = calculateScore2(2, 2, 2)
