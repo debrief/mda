@@ -17,6 +17,7 @@ Sub LoadData()
     aSheet.Range("ownship_data").Clear
     aSheet.Range("target_data").Clear
     aSheet.Range("sensor_data").Clear
+    aSheet.Range("ownship_legs").Clear
 
     ' retrieve the sample rate
     Dim sampleRate As Double
@@ -114,12 +115,20 @@ Sub LoadData()
 End Sub
 
 Sub CalcOwnshipLegs()
-    Dim aSheet As Worksheet
-    Set aSheet = ActiveWorkbook.Worksheets("Analysis")
     
     ' clear the output
+    Dim aSheet As Worksheet
+    Set aSheet = ActiveWorkbook.Worksheets("Analysis")
     aSheet.Range("ownship_legs").Clear
-
+    
+    ' we don't actually rely on the ownship data for the legs,
+    ' we're reading in hard-coded values.
+    ' But, let's pretend we are using the data
+    If oTrack Is Nothing Then
+        MsgBox "Ownship data must be loaded"
+        Exit Sub
+    End If
+    
     Dim oSheet As Worksheet
     Set oSheet = ActiveWorkbook.Worksheets("Ownship Legs")
     
@@ -152,14 +161,24 @@ Sub CalcOwnshipLegs()
 End Sub
 
 Sub CalcTargetLegs()
-
+    
     Dim aSheet As Worksheet
     Set aSheet = ActiveWorkbook.Worksheets("Analysis")
-    
+
     ' clear the output
     aSheet.Range("bearing_legs").Clear
     aSheet.Range("target_legs").Clear
+    
+    ' check data
+    If oLegs Is Nothing Then
+        MsgBox "Need to calculate ownship legs"
+        Exit Sub
+    End If
 
+    If bearingData Is Nothing Then
+        MsgBox "Need to load bearing data"
+        Exit Sub
+    End If
 
     ' ok, slice the bearing data according to ownship legs
     Dim bLegs As Legs

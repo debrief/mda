@@ -5,10 +5,11 @@ Option Explicit
 Public Sub AllTests()
     Debug.Print "== running all tests =="
     LegUtils.testSlicing
-    LegUtils.testReplaceLegs
+    testReplaceLegs
     Tests.testIncomplete
     Collate.testGetOwnshipLegs
     Collate.testGetSensorLegs
+    LegUtils.testSlicingByOwnship
   '  Tests.testFullCycle
     Debug.Print "==  tests complete   =="
 End Sub
@@ -174,3 +175,43 @@ Public Sub testIncomplete()
     
     
 End Sub
+
+Public Sub testSlicingByOwnship()
+    Debug.Print "testSlicingByOwnship"
+    
+    ' start with the ownship legs
+    Dim oLegs As Collection
+    Set oLegs = New Collection
+    
+    oLegs.add Factory.createTimePeriod("O" & oLegs.Count + 1, 5, 12)
+    oLegs.add Factory.createTimePeriod("O" & oLegs.Count + 1, 21, 31)
+    oLegs.add Factory.createTimePeriod("O" & oLegs.Count + 1, 36, 36.5)
+    oLegs.add Factory.createTimePeriod("O" & oLegs.Count + 1, 36.6, 48)
+    
+    ' now the bearing data
+    Dim bData As Leg
+    Set bData = Factory.createLeg("All bearings")
+    
+    ' and add some data
+    Dim ctr As Integer
+    For ctr = 1 To 60
+        bData.times.add ctr
+        bData.bearings.add ctr * 1.5
+    Next ctr
+    
+    ' and slice it
+    Dim res As Legs
+    Set res = bData.sliceWith(oLegs)
+    
+    ' check the results
+    If res.Items.Count <> 4 Then
+        Debug.Print "Wrong count:" & res.Items.Count & " should be 4"
+    End If
+    
+    If (res.Items(1).times(1) <> 5) Then
+        Debug.Print "Wrong start"
+    End If
+    
+End Sub
+
+

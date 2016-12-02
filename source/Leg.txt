@@ -84,7 +84,7 @@ End Property
 
 Public Function sliceWith(periods As Collection) As Legs
     Dim ctr As Integer
-    ctr = 0
+    ctr = 1
     
     Dim res As Legs
     Set res = New Legs
@@ -92,8 +92,7 @@ Public Function sliceWith(periods As Collection) As Legs
     ' ok, loop the periods
     Dim thisP As TimePeriod
     For Each thisP In periods
-        ctr = ctr + 1
-        
+    
         If ctr > times.Count Then
             Exit For
         End If
@@ -116,7 +115,8 @@ Public Function sliceWith(periods As Collection) As Legs
         Dim newLeg As Leg
         Set newLeg = Factory.createLeg("L" & res.Items.Count + 1)
         
-        While thisT < thisP.EndTime
+        ' add any times, until we've exited the loop
+        While thisT <= thisP.EndTime And ctr <= times.Count
             Dim thisB As Double
             thisB = bearings.Item(ctr)
             
@@ -127,16 +127,13 @@ Public Function sliceWith(periods As Collection) As Legs
             ' and move to the next one
             ctr = ctr + 1
             
-            If ctr > times.Count Then
-                Exit For
+            If ctr <= times.Count Then
+                thisT = times.Item(ctr)
             End If
-            
-            thisT = times.Item(ctr)
         Wend
         
-        ' ok, we're past the end of this time period, we can mov along
+        ' ok, we're past the end of this time period, we can store it
         If newLeg.times.Count > 0 Then
-        
             res.add newLeg
         End If
         
