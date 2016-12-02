@@ -24,7 +24,7 @@ Private globalDiag As Long
 ' sliceDelta: how much better the slices have to be
 Public Function sliceThisLeg(thisLeg As Leg, _
     zigBuffer As Double, optimiseThreshold As Double, sliceDelta As Double, _
-    diag As Integer) As Legs
+    diag As Integer, stepSize As Integer) As Legs
     
     Dim results As Legs
     
@@ -46,7 +46,7 @@ Public Function sliceThisLeg(thisLeg As Leg, _
     Dim bestSoFar As Double
     bestSoFar = MAX_DOUBLE
     
-    For ctr = 1 To tLen
+    For ctr = 1 To tLen Step stepSize
         ' get the time at this point
         Dim tNow As Double
         tNow = thisLeg.times.Item(ctr)
@@ -67,7 +67,8 @@ Public Function sliceThisLeg(thisLeg As Leg, _
             after.OptimiseScore = scoreFor(after, optimiseThreshold)
                        
             If (diag And Optimisation.dSLICE_SCORES) Then
-                Debug.Print tNow & " - Before score:" & before.OptimiseScore & ", After score:" & after.OptimiseScore
+                Debug.Print "Slice:" & ctr & " of " & tLen & " at:" & tNow & " - Before score:" & _
+                    before.OptimiseScore & ", After score:" & after.OptimiseScore
             End If
                        
             ' find the leg lengths (ready to normalise)
@@ -99,7 +100,7 @@ Public Function sliceThisLeg(thisLeg As Leg, _
                 ' is it better?
                 If (result < bestSoFar) Then
                     If (diag And Optimisation.dSLICE_SCORES) Then
-                        Debug.Print "Improved score: " & result & " whole leg is:" & thisLeg.OptimiseScore
+                        Debug.Print "+ Improved score: " & result & " whole leg is:" & thisLeg.OptimiseScore
                     End If
     
                     bestSoFar = result
@@ -135,7 +136,7 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
     If (thisLeg.times.Count > 1) Then
     
         ' switch off screen updates
-    '    Application.ScreenUpdating = False
+        Application.ScreenUpdating = False
     
         With Worksheets("Analysis")
     
@@ -192,7 +193,7 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
         End With
         
         ' and switch updatse back on
-      '  Application.ScreenUpdating = True
+        Application.ScreenUpdating = True
       
         If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
             Debug.Print "B:" & Range("OptB") & ", P:" & Range("OptP") & ", Q:" & _

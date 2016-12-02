@@ -58,7 +58,7 @@ Public Sub testOptimisation()
     diagnostics = Optimisation.dSLICE_SCORES
     
     Dim slices As Legs
-    Set slices = sliceThisLeg(thisData, zigOffset, threshold, sliceDelta, diagnostics)
+    Set slices = sliceThisLeg(thisData, zigOffset, threshold, sliceDelta, diagnostics, 1)
     
     Dim before As Leg
     Dim after As Leg
@@ -213,4 +213,11 @@ Public Sub testSlicingByOwnship()
     
 End Sub
 
+Public Sub outputLeg(Leg As Leg)
+    Dim ctr As Integer
+    Debug.Print "Leg:" & Leg.Name
+    For ctr = 1 To Leg.times.Count
+        Debug.Print Leg.times(ctr) & ", " & Leg.bearings(ctr)
+    Next ctr
+End Sub
 
