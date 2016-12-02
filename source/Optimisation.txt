@@ -27,6 +27,9 @@ Public Function sliceThisLeg(thisLeg As Leg, _
     
     Dim results As Legs
     
+    ' store the diagnostic level
+    globalDiag = diag
+    
     ' ok, find the overall score
     thisLeg.OptimiseScore = scoreFor(thisLeg, optimiseThreshold)
     
@@ -131,9 +134,9 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
     If (thisLeg.times.Count > 1) Then
     
         ' switch off screen updates
-        Application.ScreenUpdating = False
+    '    Application.ScreenUpdating = False
     
-        With Worksheets("OptimiseBPQ")
+        With Worksheets("Analysis")
     
         ' put the datasets into global space (so the forecast function can see them)
         Set globalLeg = thisLeg
@@ -150,13 +153,21 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
         ' set the threshold for acceptance
         
         ' set the allowable step size
-        SolverOptions precision:=0.00001
+        SolverOptions precision:=0.001, iterations:=10
         SolverOK SetCell:=Range("OptScore"), _
            MaxMinVal:=2, _
            ByChange:=Range("OptB:OptQ")
         ' set the bearing max/min (Since it will be close to the first bearing
-        solveradd Range("optB"), 3, firstBearing + 2
-        solveradd Range("optB"), 1, firstBearing - 2
+        solveradd Range("optB"), 3, firstBearing - 2
+        solveradd Range("optB"), 1, firstBearing + 2
+        
+        ' give the P and Q a range
+        solveradd Range("optP"), 3, -5
+        solveradd Range("optP"), 3, 5
+        
+        ' give the P and Q a range
+        solveradd Range("optQ"), 3, -5
+        solveradd Range("optQ"), 3, 5
         
         ' and set the initial bearing value
         Range("optB").value = firstBearing
@@ -180,7 +191,7 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
         End With
         
         ' and switch updatse back on
-        Application.ScreenUpdating = True
+      '  Application.ScreenUpdating = True
         
     End If
     
@@ -251,9 +262,9 @@ Public Function calculateScore2(B As Double, P As Double, Q As Double) As Double
         
     End If
     
-  '  If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
+    If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
         Debug.Print "B:" & B & ", P:" & P & ", Q:" & Q & ", score:" & runningTotal & " Items:" & times.Count
-  '  End If
+    End If
     
     calculateScore2 = runningTotal
     
