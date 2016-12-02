@@ -9,4 +9,40 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+Public Sub ScrollBar6_Change()
+        updateGraph
+End Sub
 
+Public Sub ScrollBar7_Change()
+        updateGraph
+End Sub
+
+Private Sub updateGraph()
+    ' get the chart
+    Dim chart As chart
+    Set chart = ActiveWorkbook.Worksheets("Analysis").ChartObjects("ZoomView").chart
+    
+    Application.ScreenUpdating = False
+    
+    With chart.Axes(xlCategory)
+        .MinimumScale = Range("I2")
+        .MaximumScale = Range("I3")
+    End With
+    
+    Application.ScreenUpdating = True
+    
+    Debug.Print "Graph updated"
+
+End Sub
+
+Private Sub Worksheet_Change(ByVal Target As Range)
+
+    If Not Intersect(Target, Range("G2")) Is Nothing Then
+        updateGraph
+    End If
+    
+    If Not Intersect(Target, Range("G3")) Is Nothing Then
+        updateGraph
+    End If
+
+End Sub

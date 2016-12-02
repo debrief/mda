@@ -116,6 +116,7 @@ Public Function sliceThisLeg(thisLeg As Leg, _
     ' ok, compare the scores
     If (thisLeg.OptimiseScore - bestSoFar > sliceDelta) Then
         ' good enough. keep the results
+        Debug.Print "Slices better, improvement:" & Int(thisLeg.OptimiseScore - bestSoFar)
     Else
         ' no, not good enough. forget them
         Set results = Nothing

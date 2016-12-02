@@ -53,9 +53,9 @@ Public Function determineTargetLegs() As Legs
     Dim zigBuffer As Double, optimiseThreshold As Double, sliceDelta As Double, diags As Integer
     Dim stepSize As Integer
     zigBuffer = 20
-    optimiseThreshold = 0.01
-    sliceDelta = 70
-    diags = 0 Or Optimisation.dSLICE_SCORES   '  Or Optimisation.dOPTIMISE_SCORES
+    optimiseThreshold = 0.05
+    sliceDelta = 200
+    diags = 0 ' Or Optimisation.dSLICE_SCORES   '  Or Optimisation.dOPTIMISE_SCORES
     stepSize = 4
 
     ' loop through legs
@@ -67,6 +67,8 @@ Public Function determineTargetLegs() As Legs
     
                 ' workout whole leg score
                 Dim newLegs As Legs
+                
+                Debug.Print "About to slice " & thisLeg.Name & " Length:" & thisLeg.times.Count
                 
                 ' use solver to optimise leg
                 Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, _
@@ -81,15 +83,10 @@ Public Function determineTargetLegs() As Legs
                     
                     res.add thisLeg
                 Else
-                
-                    Tests.outputLeg thisLeg
-                    Tests.outputLeg newLegs.Items(1)
-                    Tests.outputLeg newLegs.Items(2)
-                
                     ' ok, get swapping
                     replace thisLeg, newLegs.Items.Item(1), newLegs.Items.Item(2)
                     
-                    ' and exit this for loop (so we restart at the beginning
+                    ' and exit this for loop (so we restart at the beginning)
                     Exit For
                 End If
             End If

@@ -38,6 +38,16 @@ Sub LoadData()
     aSheet.Range("ownship_data").value = oTrack.times.Count
     aSheet.Range("sensor_data").value = bearingData.times.Count
     aSheet.Range("target_data").value = tTrack.times.Count
+    
+    ' output the ownship course data
+    Collate.outputTrack oTrack, "F11"
+    
+    ' output the target course data
+    Collate.outputTrack tTrack, "H11"
+    
+    ' output the bearings
+    Collate.outputBearings bearingData, "J11"
+    
 End Sub
 
 Sub CalcOwnshipLegs()

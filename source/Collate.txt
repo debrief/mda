@@ -4,6 +4,39 @@ Option Explicit
 Const OWNSHIP_LEGS_RANGE = "dOwnshipLegs"
 Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
 
+Public Sub outputTrack(track As OwnshipLeg, origin As String)
+    Dim outArray As Variant
+    
+    Dim numPTs As Integer
+    numPTs = track.times.Count
+    
+    ReDim outArray(numPTs, 1)
+    Dim i As Integer
+    For i = 0 To numPTs - 1
+        outArray(i, 0) = track.times(i + 1)
+        outArray(i, 1) = track.courses(i + 1)
+    Next i
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(numPTs, 2).value = outArray
+End Sub
+
+Public Sub outputBearings(track As Leg, origin As String)
+    Dim outArray As Variant
+    
+    Dim numPTs As Integer
+    numPTs = track.times.Count
+    
+    ReDim outArray(numPTs, 1)
+    Dim i As Integer
+    For i = 0 To numPTs - 1
+        outArray(i, 0) = track.times(i + 1)
+        outArray(i, 1) = track.bearings(i + 1)
+    Next i
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(numPTs, 2).value = outArray
+End Sub
+
+
 Public Function getTrackFromRange(Range As String, trackName As String, _
              colIndex As Integer, sampleRate As Double) As OwnshipLeg
     Dim res As OwnshipLeg
