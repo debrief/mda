@@ -39,11 +39,8 @@ Public Sub testOptimisation()
 
     Dim dataset As Legs
     Set dataset = Tests.createDemoLegs
-    
     Dim thisData As Leg
     Set thisData = dataset.Items(2)
-    
-    
     Dim arrTimes As Collection
     Dim arrBearings As Collection
     Set arrTimes = thisData.times

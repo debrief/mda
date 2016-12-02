@@ -4,6 +4,80 @@ Option Explicit
 Const OWNSHIP_LEGS_RANGE = "dOwnshipLegs"
 Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
 
+Public Function getTrackFromRange(Range As String, trackName As String, _
+             colIndex As Integer, sampleRate As Double) As OwnshipLeg
+    Dim res As OwnshipLeg
+    Set res = Factory.createOwnshipLeg(trackName)
+    
+    Dim oSheet As Worksheet
+    Set oSheet = ActiveWorkbook.Worksheets("Tracks")
+    
+    Dim oTrackIn As Range
+    Set oTrackIn = oSheet.Range(Range)
+      
+    Dim lastT As Double
+    lastT = -1
+    
+    Dim thisR As Range
+    For Each thisR In oTrackIn.Rows
+        Dim thisT As Long
+        Dim thisVal As Date
+        thisVal = thisR.Cells(1, 1)
+        thisT = Date2Long(thisVal + 1)
+        
+        ' see if we need to skip it
+        If (lastT = -1) Or (thisT - lastT >= sampleRate) Then
+            Dim thisC As Double
+            thisC = thisR.Cells(1, colIndex)
+            
+            res.times.add thisT
+            res.courses.add thisC
+            
+            ' remember the sample time
+            lastT = thisT
+        End If
+    Next thisR
+    
+    Set getTrackFromRange = res
+End Function
+
+Public Function getSensorDataFromRange(Range As String, sensorName As String, sampleRate As Double) As Leg
+    Dim res As Leg
+    Set res = Factory.createLeg("All data")
+   
+    Dim sSheet As Worksheet
+    Set sSheet = ActiveWorkbook.Worksheets(sensorName)
+    
+    Dim sensorDataIn As Range
+    Set sensorDataIn = sSheet.Range(Range)
+    
+    Dim lastT As Long
+    Dim thisR As Range
+    lastT = -1
+    For Each thisR In sensorDataIn.Rows
+        ' is it empty?
+        If IsEmpty(thisR.Cells(1, 1)) Then
+            ' ok, we're done
+            Exit For
+        Else
+            Dim thisT As Long
+            thisT = Date2Long(thisR.Cells(1, 1) + 1)
+            
+            ' see if we need to skip it
+            If (lastT = -1) Or (thisT - lastT >= sampleRate) Then
+                Dim thisB As Double
+                thisB = thisR.Cells(1, 3)
+                
+                res.times.add thisT
+                res.bearings.add thisB
+                
+                lastT = thisT
+            End If
+        End If
+    Next thisR
+    
+    Set getSensorDataFromRange = res
+End Function
 
 ' aah, I produced this when I thought we needed a
 ' list of ownship legs. But, the analysis data is
