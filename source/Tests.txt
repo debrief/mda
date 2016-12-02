@@ -4,12 +4,14 @@ Option Explicit
 ' run through all of our tests
 Public Sub AllTests()
     Debug.Print "== running all tests =="
-    LegUtils.testSlicing
     testReplaceLegs
+    testSlicingByOwnship
     Tests.testIncomplete
-    Collate.testGetOwnshipLegs
-    Collate.testGetSensorLegs
-    LegUtils.testSlicingByOwnship
+'    Collate.testGetOwnshipLegs
+'    Collate.testGetSensorLegs
+    LegUtils.testReplaceLegs
+    LegUtils.testSlicing
+    
   '  Tests.testFullCycle
     Debug.Print "==  tests complete   =="
 End Sub
@@ -117,7 +119,7 @@ Public Function createDemoLegs() As Legs
     
     res.add collateThisLeg("Leg1")
     res.add collateThisLeg("Leg2")
-        
+    
     Set createDemoLegs = res
 End Function
 

@@ -4,175 +4,77 @@ Option Explicit
 Const OWNSHIP_LEGS_RANGE = "dOwnshipLegs"
 Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
 
-' this module contains code to move data between VBA and the worksheet
-Public Function getSensorLegs() As Legs
-    
-    ' get ready to store results
-    Dim res As Legs
-    Set res = New Legs
-    
-    ' get the data using the named range
-    
-    ' loop through the row
-        ' is this a valid row?
-            
-            ' yes, ok = handle it
-        
-                ' get this time
-                
-                ' get this bearing
-                
-                ' get this leg name
-                
-                ' have we already create this leg?
-                
-                    ' no, create leg
-                    
-                    ' store the leg (with name as key)
-                    
-                ' add the time & bearing
-            
-            ' no, drop out of the for loop
-        
-    Set getSensorLegs = res
- 
-End Function
-
-' test that we correctly read in ownship legs
-Public Sub testGetSensorLegs()
-    Debug.Print "testGetSensorLegs"
-    
-    Dim res As Legs
-    Set res = getSensorLegs
-    
-    If res Is Nothing Then
-        Debug.Print "didn't get anything"
-    End If
-    
-    If res.Items.Count = 0 Then
-        Debug.Print "didn't get any rows"
-    End If
-    
-    If res.Items.Count <> 19 Then ' put in expected number of rows
-        Debug.Print "Didn't get " & 19 & " rows, got:" & res.Items.Count
-    End If
-    
-End Sub
-
-' put the set of legs into the spreadsheet
-Public Sub showTargetLegs(data As Legs)
-    ' retrieve the target range
-    Dim tRange As Range
-    
-    
-    ' keep track of how many rows we're gone through
-    Dim ctr As Integer
-    ctr = 1
-    
-    ' loop through the legs
-    Dim thisL As Leg
-    For Each thisL In data
-    
-        ' get the values
-        Dim tStart As Double, tEnd As Double
-        tStart = thisL.times.Item(0)
-        tEnd = thisL.times.Item(thisL.times.Count)
-    
-        ' output start time
-        
-        ' output peak value
-        
-        ' output end time
-        
-        ' output peak value
-    Next thisL
-End Sub
-
-Public Sub showCalculations(theLegs As Legs)
-    ' get the target range
-    
-    ' loop through the rows
-    
-    ' get this time (using the key)
-    
-    ' get the calculation at this time
-    
-    ' output the calculations
-    
-End Sub
-
-
 
 ' aah, I produced this when I thought we needed a
 ' list of ownship legs. But, the analysis data is
 ' already tagged with the ownship leg, so we don't need it
 ' So, we don't need it :-(
-Public Function getOwnshipLegs() As Collection
+'Public Function getOwnshipLegs() As Collection
     ' get the data
-    Dim data As Range
-    Set data = Range(OWNSHIP_LEGS_RANGE)
-    
-    ' ready to store results
-    Dim res As Collection
-    Set res = New Collection
-    
-    Dim thisRow As Range
-    Dim ctr As Integer
-    Dim thisLeg As TimePeriod
-    ctr = 0
-    For Each thisRow In data.Rows
-        If ctr = 0 Then
-            ' ok, skip the first row
-        Else
-            Dim secs As Integer
-            Dim legName As String
-            secs = thisRow.Cells(1, 1)
-            legName = thisRow.Cells(1, 2).Text
-            
-            ' did it work
-            If (legName <> "") Then
-            
-                ' is this a new leg?
-                If Not (legName = "#N/A") Then
-                    ' ok, new leg
-                    Set thisLeg = New TimePeriod
-                    thisLeg.StartTime = secs
-                Else
-                    thisLeg.EndTime = secs
-                    
-                    ' and remember it
-                    res.add thisLeg
-                End If
-            Else
-                ' ok, we're done
-                Exit For
-            End If
-        End If
-        
-        ctr = ctr + 1
-    Next thisRow
-        
-    Set getOwnshipLegs = res
-    
-End Function
+'    Dim data As Range
+'    Set data = Range(OWNSHIP_LEGS_RANGE)
+'
+'    ' ready to store results
+'    Dim res As Collection
+'    Set res = New Collection
+'
+'    Dim thisRow As Range
+'    Dim ctr As Integer
+'    Dim thisLeg As TimePeriod
+'    ctr = 0
+'    For Each thisRow In data.Rows
+'        If ctr = 0 Then
+'            ' ok, skip the first row
+'        Else
+'            Dim secs As Integer
+'            Dim legName As String
+'            secs = thisRow.Cells(1, 1)
+'            legName = thisRow.Cells(1, 2).Text
+'
+'            ' did it work
+'            If (legName <> "") Then
+'
+'                ' is this a new leg?
+'                If Not (legName = "#N/A") Then
+'                    ' ok, new leg
+'                    Set thisLeg = New TimePeriod
+'                    thisLeg.StartTime = secs
+'                Else
+'                    thisLeg.EndTime = secs
+'
+'                    ' and remember it
+'                    res.add thisLeg
+'                End If
+'            Else
+'                ' ok, we're done
+'                Exit For
+'            End If
+ '       End If
+ '
+'        ctr = ctr + 1
+'    Next thisRow
+'
+'    Set getOwnshipLegs = res
+'
+'End Function
 
 ' test that we correctly read in ownship legs
-Public Sub testGetOwnshipLegs()
-    Debug.Print "testGetOwnshipLegs"
-    
-    Dim res As Collection
-    Set res = getOwnshipLegs
-    
-    If res Is Nothing Then
-        Debug.Print "didn't get anything"
-    End If
-    
-    If res.Count = 0 Then
-        Debug.Print "didn't get any rows"
-    End If
-    
-    If res.Count <> 19 Then
-        Debug.Print "Didn't get " & 19 & " rows, got:" & res.Count
-    End If
-    
-End Sub
+'Public Sub testGetOwnshipLegs()
+'    Debug.Print "testGetOwnshipLegs"
+'
+'    Dim res As Collection
+'    Set res = getOwnshipLegs
+'
+'    If res Is Nothing Then
+'        Debug.Print "didn't get anything"
+'    End If
+'
+'    If res.Count = 0 Then
+'        Debug.Print "didn't get any rows"
+'    End If
+'
+'    If res.Count <> 19 Then
+'        Debug.Print "Didn't get " & 19 & " rows, got:" & res.Count
+'    End If
+'
+'End Sub
