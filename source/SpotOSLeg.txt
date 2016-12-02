@@ -1,14 +1,14 @@
 Attribute VB_Name = "SpotOSLeg"
 Option Explicit
 
-Public Sub testGetOwnshipLegs()
-    Debug.Print "testGetOwnshipLegs"
+'Public Sub testGetOwnshipLegs()
+'    Debug.Print "testGetOwnshipLegs"
 
     ' get the data
-    Dim osData As Leg
+'    Dim osData As Leg
 '    Set osData = loadOwnship("A3:I27243", 2, 7)
   '  Set osData = loadOwnship("R3:U20860", 1, 4)
-    Set osData = loadOwnship("Z3:AC6858", 1, 3)
+'    Set osData = loadOwnship("Z3:AC6858", 1, 3)
         
     ' data 3
 '    Const turnThreshold = 80
@@ -16,27 +16,27 @@ Public Sub testGetOwnshipLegs()
 '    Const steadyWait = 320
     
     ' data 2
-    Const turnThreshold = 20
-    Const steadyThreshold = 20
-    Const steadyWait = 190
+'    Const turnThreshold = 20
+'    Const steadyThreshold = 20
+'    Const steadyWait = 190
     
     ' get ready to store results
-    Dim osLegs As Collection
-    Set osLegs = sliceOwnship(osData, turnThreshold, steadyThreshold, steadyWait)
+'    Dim osLegs As Collection
+'    Set osLegs = sliceOwnship(osData, turnThreshold, steadyThreshold, steadyWait)
     
-    outputTurns osLegs
-    Exit Sub
-    
-    Dim oLeg As TimePeriod
-    Debug.Print "0, 0"
-    For Each oLeg In osLegs
-        Debug.Print oLeg.StartTime & ", 0"
-        Debug.Print oLeg.StartTime & ", 20"
-        Debug.Print oLeg.EndTime & ", 20"
-        Debug.Print oLeg.EndTime & ", 0"
-    Next oLeg
-    
-End Sub
+'    outputTurns osLegs
+'    Exit Sub
+'
+'    Dim oLeg As TimePeriod
+'    Debug.Print "0, 0"
+'    For Each oLeg In osLegs
+'        Debug.Print oLeg.StartTime & ", 0"
+'        Debug.Print oLeg.StartTime & ", 20"
+'        Debug.Print oLeg.EndTime & ", 20"
+'        Debug.Print oLeg.EndTime & ", 0"
+'    Next oLeg
+'
+'End Sub
 
 
 Private Function sliceOwnship(osData As Leg, turnThreshold As Double, _
@@ -238,32 +238,32 @@ Private Function loadOwnship(rangeStr As String, elapsedCol As Integer, courseCo
     
 End Function
 
-Private Sub outputTurns(oLegs As Collection)
-    
-    Application.ScreenUpdating = False
-    Application.Calculation = xlCalculationManual
-    
-    Dim rng As Range
-    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("W3:X20860")
-    rng.Clear
-    Dim thisLeg As TimePeriod
-    Dim ctr
-    ctr = 1
-    For Each thisLeg In oLegs
-        rng.Cells(ctr, 1).value = thisLeg.StartTime
-        rng.Cells(ctr, 2).value = 0
-        rng.Cells(ctr + 1, 1).value = thisLeg.StartTime
-        rng.Cells(ctr + 1, 2).value = 20
-        rng.Cells(ctr + 2, 1).value = thisLeg.EndTime
-        rng.Cells(ctr + 2, 2).value = 20
-        rng.Cells(ctr + 3, 1).value = thisLeg.EndTime
-        rng.Cells(ctr + 3, 2).value = 0
-        
-        ctr = ctr + 4
-    Next thisLeg
-    
-    Application.ScreenUpdating = True
-    Application.Calculation = xlCalculationAutomatic
-
-End Sub
+'Private Sub outputTurns(oLegs As Collection)
+'
+'    Application.ScreenUpdating = False
+'    Application.Calculation = xlCalculationManual
+'
+'    Dim rng As Range
+'    Set rng = ActiveWorkbook.Sheets("Scen1_States").Range("W3:X20860")
+'    rng.Clear
+'    Dim thisLeg As TimePeriod
+'    Dim ctr
+'    ctr = 1
+'    For Each thisLeg In oLegs
+'        rng.Cells(ctr, 1).value = thisLeg.StartTime
+'        rng.Cells(ctr, 2).value = 0
+'        rng.Cells(ctr + 1, 1).value = thisLeg.StartTime
+'        rng.Cells(ctr + 1, 2).value = 20
+'        rng.Cells(ctr + 2, 1).value = thisLeg.EndTime
+'        rng.Cells(ctr + 2, 2).value = 20
+'        rng.Cells(ctr + 3, 1).value = thisLeg.EndTime
+'        rng.Cells(ctr + 3, 2).value = 0
+'
+'        ctr = ctr + 4
+'    Next thisLeg
+'
+'    Application.ScreenUpdating = True
+'    Application.Calculation = xlCalculationAutomatic
+'
+'End Sub
 

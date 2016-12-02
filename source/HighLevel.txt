@@ -26,10 +26,10 @@ Sub LoadData()
     sampleRate = aSheet.Range("sample_rate").value
 
     ' get the ownship data
-    Set oTrack = Collate.getTrackFromRange("Ownship", "Ownship", 6, sampleRate)
+    Set oTrack = Collate.getTrackFromRange("OwnshipTrack", "Ownship", 6, sampleRate)
     
     ' and the target track
-    Set tTrack = Collate.getTrackFromRange("Target", "Target", 14, sampleRate)
+    Set tTrack = Collate.getTrackFromRange("TargetTrack", "Target", 14, sampleRate)
         
     ' now get the sensor data
     Set bearingData = Collate.getSensorDataFromRange("A3:K50000", aSheet.Range("SensorName").value, sampleRate)

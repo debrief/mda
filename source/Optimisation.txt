@@ -137,29 +137,45 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
     
         ' put the datasets into global space (so the forecast function can see them)
         Set globalLeg = thisLeg
+        
+        Debug.Print "Optimising leg starting at:" & thisLeg.times(1)
     
         ' ok, setup the optimiser
         SolverReset
+        
+        ' get the first bearing
+        Dim firstBearing As Double
+        firstBearing = thisLeg.bearings.Item(1)
         
         ' set the threshold for acceptance
         
         ' set the allowable step size
         SolverOptions precision:=0.00001
-        SolverOK SetCell:=Range("B6"), _
+        SolverOK SetCell:=Range("OptScore"), _
            MaxMinVal:=2, _
-           ByChange:=Range("B3:B5")
+           ByChange:=Range("OptB:OptQ")
+        ' set the bearing max/min (Since it will be close to the first bearing
+        solveradd Range("optB"), 3, firstBearing + 2
+        solveradd Range("optB"), 1, firstBearing - 2
+        
+        ' and set the initial bearing value
+        Range("optB").value = firstBearing
+        
+        Debug.Print "Setting initial bearing to:" & firstBearing
         
         ' run the solver
         SolverSolve UserFinish:=True
         
         ' get the result out of the box
         Dim resStr
-        resStr = Range("B6")
+        resStr = Range("OptScore")
         If (IsNumeric(resStr)) Then
         result = resStr
         Else
             Debug.Print "** Optimise result isn't string!"
         End If
+        
+        Debug.Print "Optimise score was:" & Int(result)
         
         End With
         
@@ -174,12 +190,14 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
 End Function
 
 
-Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
+Public Function calculateScore2(B As Double, P As Double, Q As Double) As Double
     Dim runningTotal
     runningTotal = 0
         
     Dim times As Collection
     Dim bearings As Collection
+    
+    Debug.Print "Trying P of:" & P
     
     If (True) Then
     
@@ -233,12 +251,11 @@ Public Function calculateScore(B As Double, P As Double, Q As Double) As Double
         
     End If
     
-    If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
-        Debug.Print "B:" & B & ", P:" & P & ", Q:" & Q & ", score:" & runningTotal
-    End If
-
+  '  If (globalDiag And Optimisation.dOPTIMISE_SCORES) Then
+        Debug.Print "B:" & B & ", P:" & P & ", Q:" & Q & ", score:" & runningTotal & " Items:" & times.Count
+  '  End If
     
-    calculateScore = runningTotal
+    calculateScore2 = runningTotal
     
 End Function
 
@@ -293,9 +310,9 @@ Public Sub testOptimise()
     globalDiag = dOPTIMISE_SCORES
     
     Dim score As Double
-    score = calculateScore(2, 2, 2)
-    score = calculateScore(4, 4, 4)
-    score = calculateScore(123, 456, 789)
+    score = calculateScore2(2, 2, 2)
+    score = calculateScore2(4, 4, 4)
+    score = calculateScore2(123, 456, 789)
     
     Debug.Print "this score is:" & score
                 

@@ -54,7 +54,7 @@ Public Function determineTargetLegs() As Legs
     zigBuffer = 20
     optimiseThreshold = 0.01
     sliceDelta = 70
-    diags = 0
+    diags = Optimisation.dSLICE_SCORES Or Optimisation.dOPTIMISE_SCORES
 
     ' loop through legs
     While Me.complete <> True
@@ -68,17 +68,6 @@ Public Function determineTargetLegs() As Legs
                 
                 ' COMMENTING OUT THIS NEXT BIT, UNTIL WE HAVE BETTER DATA TO OPTIMISE
                 Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, optimiseThreshold, sliceDelta, diags)
-             '   If thisLeg.name = "Leg2" Then
-             '       Set newLegs = New Legs
-             '       newLegs.add Factory.createLeg("Leg2.1")
-             '       newLegs.add Factory.createLeg("Leg2.2")
-             '   ElseIf thisLeg.name = "Leg2.2" Then
-             '       Set newLegs = New Legs
-             '       newLegs.add Factory.createLeg("Leg2.2.1")
-             '       newLegs.add Factory.createLeg("Leg2.2.2")
-             '   Else
-             '       Set newLegs = Nothing
-             '   End If
                 
                 ' did we get some?
                 If newLegs Is Nothing Then
