@@ -63,7 +63,7 @@ Public Function determineTargetLegs(noSlice As String) As Legs
     stepSize = 4
 
     ' loop through legs
-    While Me.complete <> True
+    While Me.complete <> True And res.Items.Count < 4
         ' ok, loop through them
         Dim thisLeg As Leg
         For Each thisLeg In Items
@@ -98,6 +98,8 @@ Public Function determineTargetLegs(noSlice As String) As Legs
                 Else
                     ' ok, we can't slice it. mark it as processed
                     thisLeg.Processed = True
+                    
+                    Debug.Print "Not slicing " & thisLeg.Name
                 End If
             End If
         Next thisLeg
