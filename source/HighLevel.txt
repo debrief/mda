@@ -47,7 +47,7 @@ Sub LoadData()
     
     ' output the bearings
     Collate.outputBearings bearingData, "J11"
-    
+
 End Sub
 
 Sub CalcOwnshipLegs()
@@ -93,6 +93,8 @@ Sub CalcOwnshipLegs()
     
     ' output the results
     aSheet.Range("ownship_legs").value = oLegs.Count
+    
+    Collate.outputOwnshipLegs oLegs, "L11"
 
 End Sub
 
