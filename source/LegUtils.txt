@@ -53,6 +53,62 @@ Function SliceIntoLegs(thisLeg As Leg, tNow As Double, zigBuffer As Double) As L
     
 End Function
 
+
+Public Function canSlice(legName As String, noSlice As String) As Boolean
+    Dim res As Boolean
+    res = True
+    
+    ' do we have a string
+    If Len(noSlice) > 0 Then
+        ' ok, block it up
+        Dim strArray() As String
+        strArray() = Split(noSlice, ",")
+        
+        Dim i As Integer
+        For i = LBound(strArray) To UBound(strArray)
+            ' ok, trim it
+            Dim trimmed As String
+            trimmed = Trim(strArray(i))
+            
+            ' ok, and the test
+            If (legName Like trimmed) Then
+                canSlice = False
+                Exit Function
+            End If
+        Next i
+    End If
+
+    canSlice = res
+End Function
+
+
+
+Public Sub testCanSlice()
+    Debug.Print "Testing testCanSlice"
+    
+    If Not canSlice("L1", "L2, L3") Then
+        Debug.Print "Should slice L1"
+    End If
+    If canSlice("L2", "L2, L3, L4") Then
+        Debug.Print "Should not slice L2"
+    End If
+    If Not canSlice("L2", "L3, L4") Then
+        Debug.Print "Should not slice L2"
+    End If
+    If Not canSlice("L2.1", "L2, L2.2, L4") Then
+        Debug.Print "Should not slice L2.1"
+    End If
+    If canSlice("L2.1", "L2.1, L2.2, L4") Then
+        Debug.Print "Should not slice L2.1a"
+    End If
+    If canSlice("L2.1", "L2.*,  L4") Then
+        Debug.Print "Should not slice L2.1b"
+    End If
+    If canSlice("L2.1", "L#.#,  L4") Then
+        Debug.Print "Should not slice L2.1b"
+    End If
+End Sub
+
 Public Sub testSlicing()
     
     Debug.Print "testSlicing"

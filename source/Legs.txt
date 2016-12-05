@@ -46,6 +46,7 @@ Public Sub replace(original As Leg, before As Leg, after As Leg)
     pLegs.Remove original.Name
 End Sub
 
+
 ' slice this set of legs according to bearing rates
 ' noSlice - comma separate list of leg names (including wildcards) that should
 '           not be sliced
@@ -73,24 +74,30 @@ Public Function determineTargetLegs(noSlice As String) As Legs
                 
                 Debug.Print "About to slice " & thisLeg.Name & " Length:" & thisLeg.times.Count
                 
-                ' use solver to optimise leg
-                Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, _
-                    optimiseThreshold, sliceDelta, diags, stepSize)
-                
-                ' did we get some?
-                If newLegs Is Nothing Then
-'                If Not newLegs Is Nothing And newLegs.Items.Count = 2 Then
-                    ' ok, no slicing. This leg is done,
-                    ' we can move onto the next one
-                    thisLeg.Processed = True
+                If LegUtils.canSlice(thisLeg.Name, noSlice) Then
                     
-                    res.add thisLeg
+                    ' use solver to optimise leg
+                    Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, _
+                        optimiseThreshold, sliceDelta, diags, stepSize)
+                    
+                    ' did we get some?
+                    If newLegs Is Nothing Then
+    '                If Not newLegs Is Nothing And newLegs.Items.Count = 2 Then
+                        ' ok, no slicing. This leg is done,
+                        ' we can move onto the next one
+                        thisLeg.Processed = True
+                        
+                        res.add thisLeg
+                    Else
+                        ' ok, get swapping
+                        replace thisLeg, newLegs.Items.Item(1), newLegs.Items.Item(2)
+                        
+                        ' and exit this for loop (so we restart at the beginning)
+                        Exit For
+                    End If
                 Else
-                    ' ok, get swapping
-                    replace thisLeg, newLegs.Items.Item(1), newLegs.Items.Item(2)
-                    
-                    ' and exit this for loop (so we restart at the beginning)
-                    Exit For
+                    ' ok, we can't slice it. mark it as processed
+                    thisLeg.Processed = True
                 End If
             End If
         Next thisLeg
