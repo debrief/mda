@@ -63,7 +63,7 @@ Public Function determineTargetLegs(noSlice As String) As Legs
     stepSize = 4
 
     ' loop through legs
-    While Me.complete <> True And res.Items.Count < 4
+    While Me.complete <> True And res.Items.Count < 2
         ' ok, loop through them
         Dim thisLeg As Leg
         For Each thisLeg In Items
@@ -80,27 +80,20 @@ Public Function determineTargetLegs(noSlice As String) As Legs
                     Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, _
                         optimiseThreshold, sliceDelta, diags, stepSize)
                     
-                    ' have a look at the scores
-                   ' Dim calcCtr As Integer
-                   ' For calcCtr = 1 To thisLeg.calcs.Count
-                   ' Next calcCtr
-                   ' thisLeg.calcs.Item
-                    
                     ' did we get some?
-                    If newLegs Is Nothing Then
-    '                If Not newLegs Is Nothing And newLegs.Items.Count = 2 Then
+  '                  If newLegs Is Nothing Then
                         ' ok, no slicing. This leg is done,
                         ' we can move onto the next one
                         thisLeg.Processed = True
                         
                         res.add thisLeg
-                    Else
-                        ' ok, get swapping
-                        replace thisLeg, newLegs.Items.Item(1), newLegs.Items.Item(2)
-                        
-                        ' and exit this for loop (so we restart at the beginning)
-                        Exit For
-                    End If
+'                    Else
+'                        ' ok, get swapping
+'                        replace thisLeg, newLegs.Items.Item(1), newLegs.Items.Item(2)
+'
+'                        ' and exit this for loop (so we restart at the beginning)
+'                        Exit For
+'                    End If
                 Else
                     ' ok, we can't slice it. mark it as processed
                     res.add thisLeg

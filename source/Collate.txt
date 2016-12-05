@@ -5,6 +5,42 @@ Const OWNSHIP_LEGS_RANGE = "dOwnshipLegs"
 Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
 
 
+Public Sub outputLegSliceScores(tLegs As Legs, origin As String)
+    Dim outArray As Variant
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(10000, 2).Clear
+    
+    ' work out how many items we need
+    Dim calcCtr As Integer
+    Dim thisL As Leg
+    For Each thisL In tLegs.Items
+        calcCtr = calcCtr + thisL.calcs.Count
+    Next thisL
+    
+    Dim offValue As Integer
+    offValue = ActiveWorkbook.Worksheets("Analysis").Range("offValue").value
+    
+    ReDim outArray(calcCtr, 1)
+    Dim i As Integer
+    Dim rowCtr As Integer
+    rowCtr = 0
+    Dim oLeg As Leg
+    Dim lastTime
+    lastTime = 0
+    For Each oLeg In tLegs.Items
+        Dim thisCalc As CalcDetail
+        For Each thisCalc In oLeg.calcs
+            outArray(rowCtr, 0) = thisCalc.calcTime
+            outArray(rowCtr, 1) = thisCalc.calcSum
+        Next thisCalc
+        
+        rowCtr = rowCtr + 1
+    Next oLeg
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(calcCtr, 2).value = outArray
+
+End Sub
+
 Public Sub outputWholeLegScores(tLegs As Legs, origin As String)
     Dim outArray As Variant
     
@@ -25,13 +61,13 @@ Public Sub outputWholeLegScores(tLegs As Legs, origin As String)
     lastTime = 0
     For Each oLeg In tLegs.Items
         outArray(rowCtr, 0) = oLeg.times(1)
-        outArray(rowCtr, 1) = oLeg.OptimiseScore
+        outArray(rowCtr, 1) = offValue
         outArray(rowCtr + 1, 0) = oLeg.times(1)
-        outArray(rowCtr + 1, 1) = offValue
+        outArray(rowCtr + 1, 1) = oLeg.OptimiseScore
         outArray(rowCtr + 2, 0) = oLeg.times(oLeg.times.Count)
-        outArray(rowCtr + 2, 1) = offValue
+        outArray(rowCtr + 2, 1) = oLeg.OptimiseScore
         outArray(rowCtr + 3, 0) = oLeg.times(oLeg.times.Count)
-        outArray(rowCtr + 3, 1) = oLeg.OptimiseScore
+        outArray(rowCtr + 3, 1) = offValue
         
         rowCtr = rowCtr + 4
     Next oLeg

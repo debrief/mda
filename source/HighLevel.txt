@@ -137,6 +137,9 @@ Sub CalcTargetLegs()
     
     ' and the whole leg scores
     Collate.outputWholeLegScores targetLegs, "N11"
+    
+    ' and the leg slice scores
+    Collate.outputLegSliceScores targetLegs, "P11"
 End Sub
 
 'Sub DoCalc_Click()
