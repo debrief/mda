@@ -156,7 +156,7 @@ Private Function scoreFor(thisLeg As Leg, threshold As Double) As Double
         ' set the threshold for acceptance
         
         ' set the allowable step size
-        SolverOptions precision:=0.001, iterations:=30
+        SolverOptions precision:=0.001, iterations:=50
         SolverOK SetCell:=Range("OptScore"), _
            MaxMinVal:=2, _
            ByChange:=Range("OptB:OptQ")

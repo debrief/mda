@@ -134,6 +134,9 @@ Sub CalcTargetLegs()
     
     ' output the results
     aSheet.Range("target_legs").value = targetLegs.Items.Count
+    
+    ' and the whole leg scores
+    Collate.outputWholeLegScores targetLegs, "N11"
 End Sub
 
 'Sub DoCalc_Click()

@@ -5,6 +5,41 @@ Const OWNSHIP_LEGS_RANGE = "dOwnshipLegs"
 Const ANALYSIS_SHEET_RANGE = "dAnalysisPane"
 
 
+Public Sub outputWholeLegScores(tLegs As Legs, origin As String)
+    Dim outArray As Variant
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(10000, 2).Clear
+    
+    Dim numPTs As Integer
+    numPTs = tLegs.Items.Count
+    
+    Dim offValue As Integer
+    offValue = ActiveWorkbook.Worksheets("Analysis").Range("offValue").value
+    
+    ReDim outArray(numPTs * 4, 1)
+    Dim i As Integer
+    Dim rowCtr As Integer
+    rowCtr = 0
+    Dim oLeg As Leg
+    Dim lastTime
+    lastTime = 0
+    For Each oLeg In tLegs.Items
+        outArray(rowCtr, 0) = oLeg.times(1)
+        outArray(rowCtr, 1) = oLeg.OptimiseScore
+        outArray(rowCtr + 1, 0) = oLeg.times(1)
+        outArray(rowCtr + 1, 1) = offValue
+        outArray(rowCtr + 2, 0) = oLeg.times(oLeg.times.Count)
+        outArray(rowCtr + 2, 1) = offValue
+        outArray(rowCtr + 3, 0) = oLeg.times(oLeg.times.Count)
+        outArray(rowCtr + 3, 1) = oLeg.OptimiseScore
+        
+        rowCtr = rowCtr + 4
+    Next oLeg
+    
+    ActiveWorkbook.Worksheets("Analysis").Range(origin).Resize(numPTs * 4, 2).value = outArray
+
+End Sub
+
 Public Sub outputOwnshipLegs(data As Collection, origin As String)
     Dim outArray As Variant
     

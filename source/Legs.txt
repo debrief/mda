@@ -80,6 +80,12 @@ Public Function determineTargetLegs(noSlice As String) As Legs
                     Set newLegs = Optimisation.sliceThisLeg(thisLeg, zigBuffer, _
                         optimiseThreshold, sliceDelta, diags, stepSize)
                     
+                    ' have a look at the scores
+                   ' Dim calcCtr As Integer
+                   ' For calcCtr = 1 To thisLeg.calcs.Count
+                   ' Next calcCtr
+                   ' thisLeg.calcs.Item
+                    
                     ' did we get some?
                     If newLegs Is Nothing Then
     '                If Not newLegs Is Nothing And newLegs.Items.Count = 2 Then
@@ -97,6 +103,7 @@ Public Function determineTargetLegs(noSlice As String) As Legs
                     End If
                 Else
                     ' ok, we can't slice it. mark it as processed
+                    res.add thisLeg
                     thisLeg.Processed = True
                     
                     Debug.Print "Not slicing " & thisLeg.Name
