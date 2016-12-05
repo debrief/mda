@@ -127,7 +127,7 @@ Public Sub testFullCycle()
     Set data = Tests.createDemoLegs
     
     Dim res As Legs
-    Set res = data.determineTargetLegs
+    Set res = data.determineTargetLegs("")
     
     If res.Items.Count <> 4 Then
         Debug.Print "failed to find four legs, found:" & res.Items.Count

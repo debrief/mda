@@ -43,6 +43,7 @@ Public Sub outputOwnshipLegs(data As Collection, origin As String)
 
 End Sub
 
+
 Public Sub outputTrack(track As OwnshipLeg, origin As String)
     Dim outArray As Variant
     

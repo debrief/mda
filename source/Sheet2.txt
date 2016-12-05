@@ -9,6 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+
+
 Public Sub ScrollBar6_Change()
         updateGraph
 End Sub
@@ -46,3 +48,4 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     End If
 
 End Sub
+

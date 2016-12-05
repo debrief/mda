@@ -46,7 +46,10 @@ Public Sub replace(original As Leg, before As Leg, after As Leg)
     pLegs.Remove original.Name
 End Sub
 
-Public Function determineTargetLegs() As Legs
+' slice this set of legs according to bearing rates
+' noSlice - comma separate list of leg names (including wildcards) that should
+'           not be sliced
+Public Function determineTargetLegs(noSlice As String) As Legs
     Dim res As Legs
     Set res = New Legs
     

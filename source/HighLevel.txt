@@ -93,7 +93,6 @@ Sub CalcOwnshipLegs()
     
     ' output the results
     aSheet.Range("ownship_legs").value = oLegs.Count
-    
     Collate.outputOwnshipLegs oLegs, "L11"
 
 End Sub
@@ -118,6 +117,10 @@ Sub CalcTargetLegs()
         Exit Sub
     End If
 
+    ' let the user specify some overrides
+    Dim noSlice As String
+    noSlice = aSheet.Range("noSlice").value
+
     ' ok, slice the bearing data according to ownship legs
     Dim bLegs As Legs
     Set bLegs = bearingData.sliceWith(oLegs)
@@ -127,7 +130,7 @@ Sub CalcTargetLegs()
     
     ' now work through the bearing legs
     Dim targetLegs As Legs
-    Set targetLegs = bLegs.determineTargetLegs
+    Set targetLegs = bLegs.determineTargetLegs(noSlice)
     
     ' output the results
     aSheet.Range("target_legs").value = targetLegs.Items.Count
